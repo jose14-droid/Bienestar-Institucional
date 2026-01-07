@@ -1,0 +1,77 @@
+{% extends "user_base.html" %}
+
+{% block title %}Posponer Cita - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block user_content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Posponer Cita</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Información de la cita actual:</strong><br>
+                    <strong>Fecha:</strong> {{ cita.fecha.strftime('%d/%m/%Y') }}<br>
+                    <strong>Hora:</strong> {{ cita.hora.strftime('%H:%M') }}<br>
+                    <strong>Motivo:</strong> {{ cita.motivo }}
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_pospuesta" class="form-label">Nueva Fecha <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha_pospuesta" name="fecha_pospuesta" required>
+                            <div class="form-text">Seleccione la nueva fecha para la cita</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hora_pospuesta" class="form-label">Nueva Hora <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" id="hora_pospuesta" name="hora_pospuesta" required>
+                            <div class="form-text">Seleccione la nueva hora para la cita</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo_posposicion" class="form-label">Motivo de la Posposición <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motivo_posposicion" name="motivo_posposicion" rows="4" required placeholder="Explique el motivo por el cual necesita posponer la cita..."></textarea>
+                        <div class="form-text">Este motivo será visible para el administrador y el docente</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="archivos" class="form-label">Documento PDF <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="archivos" name="archivos" accept=".pdf" required>
+                        <div class="form-text">Debe subir un documento PDF que respalde el motivo de la posposición</div>
+                        <div class="invalid-feedback">Por favor seleccione un archivo PDF</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('cita.citas') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-calendar-alt me-2"></i>Posponer Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha mínima como hoy
+    const fechaInput = document.getElementById('fecha_pospuesta');
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaInput.setAttribute('min', hoy);
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+

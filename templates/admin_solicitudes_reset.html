@@ -1,0 +1,396 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Solicitudes de Reset de Contraseña - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-key me-2"></i>Solicitudes de Reset de Contraseña</h2>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pendientes</h6>
+                        <h3 class="mb-0 text-warning">{{ solicitudes_pendientes|length }}</h3>
+                    </div>
+                    <i class="fas fa-clock fa-2x text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Procesadas</h6>
+                        <h3 class="mb-0 text-success">{{ solicitudes_procesadas|length }}</h3>
+                    </div>
+                    <i class="fas fa-check-circle fa-2x text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Rechazadas</h6>
+                        <h3 class="mb-0 text-danger">{{ solicitudes_rechazadas|length }}</h3>
+                    </div>
+                    <i class="fas fa-times-circle fa-2x text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Solicitudes Pendientes -->
+{% if solicitudes_pendientes %}
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-warning text-white">
+        <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Solicitudes Pendientes</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 120px;">Usuario</th>
+                        <th style="min-width: 150px;">Nombre Completo</th>
+                        <th style="min-width: 100px;">Rol</th>
+                        <th style="min-width: 200px;">Email</th>
+                        <th style="min-width: 150px;">Fecha Solicitud</th>
+                        <th style="min-width: 180px;" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitud in solicitudes_pendientes %}
+                    <tr>
+                        <td>
+                            <strong>{{ solicitud.usuario.username }}</strong>
+                        </td>
+                        <td>{{ solicitud.usuario.nombre_completo or 'No especificado' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if solicitud.usuario.rol == 'admin' else 'primary' if solicitud.usuario.rol == 'docente' else 'info' }}">
+                                {{ solicitud.usuario.rol.title() }}
+                            </span>
+                        </td>
+                        <td>
+                            <small>{{ solicitud.usuario.email or 'No tiene email' }}</small>
+                        </td>
+                        <td>
+                            <small>{{ solicitud.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#procesarModal{{ solicitud.id }}" title="Procesar Solicitud">
+                                    <i class="fas fa-check me-1"></i>Procesar
+                                </button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rechazarModal{{ solicitud.id }}" title="Rechazar Solicitud">
+                                    <i class="fas fa-times me-1"></i>Rechazar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modales para Solicitudes Pendientes (fuera de la tabla) -->
+{% for solicitud in solicitudes_pendientes %}
+<!-- Modal para Procesar -->
+<div class="modal fade" id="procesarModal{{ solicitud.id }}" tabindex="-1" aria-labelledby="procesarModalLabel{{ solicitud.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="procesarModalLabel{{ solicitud.id }}">
+                    <i class="fas fa-check-circle me-2"></i>Procesar Solicitud
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.procesar_solicitud_reset', solicitud_id=solicitud.id) }}" id="procesarForm{{ solicitud.id }}">
+                <div class="modal-body">
+                    <div class="mb-3 p-3 bg-light rounded">
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <strong>Usuario:</strong><br>
+                                <span>{{ solicitud.usuario.username }}</span>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <strong>Nombre:</strong><br>
+                                <span>{{ solicitud.usuario.nombre_completo or 'No especificado' }}</span>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <strong>Rol:</strong><br>
+                                <span class="badge bg-{{ 'danger' if solicitud.usuario.rol == 'admin' else 'primary' if solicitud.usuario.rol == 'docente' else 'info' }}">
+                                    {{ solicitud.usuario.rol.title() }}
+                                </span>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <strong>Email:</strong><br>
+                                <small>{{ solicitud.usuario.email or 'No tiene email' }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nueva_password{{ solicitud.id }}" class="form-label">Nueva Contraseña <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="nueva_password{{ solicitud.id }}" name="nueva_password" required minlength="6" placeholder="Mínimo 6 caracteres" autocomplete="off">
+                            <button type="button" class="btn btn-outline-secondary" onclick="generarPasswordReset({{ solicitud.id }})" title="Generar contraseña aleatoria">
+                                <i class="fas fa-random"></i>
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">La contraseña será enviada al correo del usuario</small>
+                        <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observaciones{{ solicitud.id }}" class="form-label">Observaciones (opcional)</label>
+                        <textarea class="form-control" id="observaciones{{ solicitud.id }}" name="observaciones" rows="2" placeholder="Observaciones sobre esta solicitud"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Procesar Solicitud
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Rechazar -->
+<div class="modal fade" id="rechazarModal{{ solicitud.id }}" tabindex="-1" aria-labelledby="rechazarModalLabel{{ solicitud.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="rechazarModalLabel{{ solicitud.id }}">
+                    <i class="fas fa-times-circle me-2"></i>Rechazar Solicitud
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.rechazar_solicitud_reset', solicitud_id=solicitud.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3 p-3 bg-light rounded">
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <strong>Usuario:</strong><br>
+                                <span>{{ solicitud.usuario.username }}</span>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <strong>Nombre:</strong><br>
+                                <span>{{ solicitud.usuario.nombre_completo or 'No especificado' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observaciones_rechazo{{ solicitud.id }}" class="form-label">Motivo del Rechazo (opcional)</label>
+                        <textarea class="form-control" id="observaciones_rechazo{{ solicitud.id }}" name="observaciones" rows="3" placeholder="Indique el motivo del rechazo"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times me-2"></i>Rechazar Solicitud
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card mb-4">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
+        <h4 class="text-muted">No hay solicitudes pendientes</h4>
+        <p class="text-muted">Todas las solicitudes han sido procesadas</p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Solicitudes Procesadas -->
+{% if solicitudes_procesadas %}
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Solicitudes Procesadas</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 120px;">Usuario</th>
+                        <th style="min-width: 150px;">Nombre Completo</th>
+                        <th style="min-width: 100px;">Rol</th>
+                        <th style="min-width: 200px;">Email</th>
+                        <th style="min-width: 150px;">Fecha Solicitud</th>
+                        <th style="min-width: 200px;">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitud in solicitudes_procesadas %}
+                    <tr>
+                        <td><strong>{{ solicitud.usuario.username }}</strong></td>
+                        <td>{{ solicitud.usuario.nombre_completo or 'No especificado' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if solicitud.usuario.rol == 'admin' else 'primary' if solicitud.usuario.rol == 'docente' else 'info' }}">
+                                {{ solicitud.usuario.rol.title() }}
+                            </span>
+                        </td>
+                        <td><small>{{ solicitud.usuario.email or 'No tiene email' }}</small></td>
+                        <td><small>{{ solicitud.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</small></td>
+                        <td><small class="text-muted">{{ solicitud.observaciones or 'Sin observaciones' }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Solicitudes Rechazadas -->
+{% if solicitudes_rechazadas %}
+<div class="card shadow-sm">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0"><i class="fas fa-times-circle me-2"></i>Solicitudes Rechazadas</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 120px;">Usuario</th>
+                        <th style="min-width: 150px;">Nombre Completo</th>
+                        <th style="min-width: 100px;">Rol</th>
+                        <th style="min-width: 200px;">Email</th>
+                        <th style="min-width: 150px;">Fecha Solicitud</th>
+                        <th style="min-width: 200px;">Motivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitud in solicitudes_rechazadas %}
+                    <tr>
+                        <td><strong>{{ solicitud.usuario.username }}</strong></td>
+                        <td>{{ solicitud.usuario.nombre_completo or 'No especificado' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if solicitud.usuario.rol == 'admin' else 'primary' if solicitud.usuario.rol == 'docente' else 'info' }}">
+                                {{ solicitud.usuario.rol.title() }}
+                            </span>
+                        </td>
+                        <td><small>{{ solicitud.usuario.email or 'No tiene email' }}</small></td>
+                        <td><small>{{ solicitud.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</small></td>
+                        <td><small class="text-muted">{{ solicitud.observaciones or 'Sin motivo especificado' }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.modal {
+    z-index: 1055;
+}
+
+.modal-backdrop {
+    z-index: 1050;
+}
+
+.table-responsive {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+}
+
+.btn-group-sm .btn {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+</style>
+
+<script>
+// Función para generar contraseña aleatoria
+function generarPasswordReset(solicitudId) {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < 10; i++) {
+        password += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    const passwordInput = document.getElementById('nueva_password' + solicitudId);
+    if (passwordInput) {
+        passwordInput.value = password;
+        passwordInput.classList.remove('is-invalid');
+    }
+}
+
+// Validación de formularios de procesar
+document.addEventListener('DOMContentLoaded', function() {
+    {% for solicitud in solicitudes_pendientes %}
+    const procesarForm{{ solicitud.id }} = document.getElementById('procesarForm{{ solicitud.id }}');
+    if (procesarForm{{ solicitud.id }}) {
+        procesarForm{{ solicitud.id }}.addEventListener('submit', function(e) {
+            const passwordInput = document.getElementById('nueva_password{{ solicitud.id }}');
+            if (passwordInput && passwordInput.value.length < 6) {
+                e.preventDefault();
+                passwordInput.classList.add('is-invalid');
+                return false;
+            }
+            if (passwordInput) {
+                passwordInput.classList.remove('is-invalid');
+            }
+        });
+        
+        const passwordInput{{ solicitud.id }} = document.getElementById('nueva_password{{ solicitud.id }}');
+        if (passwordInput{{ solicitud.id }}) {
+            passwordInput{{ solicitud.id }}.addEventListener('input', function() {
+                if (this.value.length >= 6) {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        }
+    }
+    {% endfor %}
+});
+</script>
+{% endblock %}
+

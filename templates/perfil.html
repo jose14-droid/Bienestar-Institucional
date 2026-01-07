@@ -1,0 +1,1333 @@
+{% if session.rol in ['admin', 'administrador'] %}
+    {% extends "admin_base.html" %}
+{% elif session.rol == 'docente' %}
+    {% extends "docente_base.html" %}
+{% else %}
+    {% extends "user_base.html" %}
+{% endif %}
+
+{% block title %}Mi Perfil - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Mi Perfil</h4>
+                        <span class="badge bg-light text-dark">{{ usuario.rol.title() }}</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Foto de Perfil -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <div class="mb-3">
+                                    {% if usuario.foto_perfil %}
+                                    <img src="{{ url_for('foto_perfil', filename=usuario.foto_perfil) }}" 
+                                         alt="Foto de perfil" 
+                                         class="rounded-circle border border-primary" 
+                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                         style="width: 150px; height: 150px; font-size: 4rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="foto_perfil" class="form-label">Cambiar Foto de Perfil</label>
+                                    <input type="file" class="form-control" id="foto_perfil" name="foto_perfil" accept="image/png,image/jpeg,image/jpg,image/gif" onchange="previewImage(this)">
+                                    <div class="form-text">Formatos permitidos: PNG, JPG, JPEG, GIF. Tamaño máximo: 5MB</div>
+                                    <div id="imagePreview" class="mt-2" style="display: none;">
+                                        <img id="previewImg" src="" alt="Vista previa" class="rounded-circle border border-primary mt-2" style="width: 150px; height: 150px; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username" value="{{ usuario.username }}" disabled>
+                                </div>
+                                <div class="form-text">El nombre de usuario no se puede cambiar</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email if usuario.email else '' }}" placeholder="Ingrese su correo electrónico">
+                                </div>
+                                <div class="form-text">Ingrese su correo electrónico para recibir notificaciones</div>
+                                <div class="invalid-feedback">Por favor ingrese un correo electrónico válido</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" value="{{ usuario.nombre_completo or '' }}" placeholder="Ingrese su nombre completo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios">
+                            </div>
+                            <div class="form-text">Solo se permiten letras y espacios</div>
+                            <div class="invalid-feedback">Por favor solo ingrese letras y espacios</div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Número Telefónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono or '' }}" placeholder="0987654321" maxlength="10" pattern="[0-9]{10}">
+                                </div>
+                                <div class="form-text">Ingrese 10 dígitos</div>
+                                <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="cedula" class="form-label">Cédula</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                    <input type="text" class="form-control" id="cedula" name="cedula" value="{{ usuario.cedula if usuario.cedula and not usuario.cedula.startswith('TEMP') else '' }}" placeholder="Ingrese su cédula" pattern="[0-9]{10}" maxlength="10" title="La cédula debe contener exactamente 10 números">
+                                    <div class="form-text">Ingrese su número de cédula (10 dígitos)</div>
+                                    <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ usuario.direccion or '' }}" placeholder="Ingrese su dirección completa">
+                            </div>
+                        </div>
+                        
+                        {% if usuario.rol == 'usuario' %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="carrera_id" class="form-label">Carrera</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                    <select class="form-select" id="carrera_id" name="carrera_id">
+                                        <option value="">Seleccione una carrera</option>
+                                        {% for carrera in carreras %}
+                                        <option value="{{ carrera.id }}" {% if usuario.carrera_id == carrera.id %}selected{% endif %}>{{ carrera.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-text">Seleccione su carrera de estudio</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="semestre" class="form-label">Semestre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <select class="form-select" id="semestre" name="semestre">
+                                        <option value="">Seleccione un semestre</option>
+                                        <option value="1" {% if usuario.semestre == 1 %}selected{% endif %}>Primer Semestre</option>
+                                        <option value="2" {% if usuario.semestre == 2 %}selected{% endif %}>Segundo Semestre</option>
+                                        <option value="3" {% if usuario.semestre == 3 %}selected{% endif %}>Tercer Semestre</option>
+                                        <option value="4" {% if usuario.semestre == 4 %}selected{% endif %}>Cuarto Semestre</option>
+                                    </select>
+                                </div>
+                                <div class="form-text">Seleccione su semestre actual</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if usuario.rol == 'docente' or usuario.rol == 'admin' %}
+                        <div class="mb-3">
+                            <label for="curso" class="form-label">
+                                {% if usuario.rol == 'docente' %}
+                                    Curso que Dirige/Representa
+                                {% else %}
+                                    Área/Departamento
+                                {% endif %}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-{{ 'chalkboard-teacher' if usuario.rol == 'docente' else 'building' }}"></i>
+                                </span>
+                                <input type="text" class="form-control" id="curso" name="curso" value="{{ usuario.curso or '' }}" 
+                                    placeholder="{% if usuario.rol == 'docente' %}Ej: Primer Semestre, Segundo Semestre, etc.{% else %}Ej: Coordinación de Bienestar, Administración, etc.{% endif %}">
+                            </div>
+                            <div class="form-text">
+                                {% if usuario.rol == 'docente' %}
+                                    Especifique el curso o semestre que dirige o representa
+                                {% else %}
+                                    Especifique el área o departamento al que pertenece (opcional)
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Rol</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                    <input type="text" class="form-control" value="{{ usuario.rol.title() }}" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Estado</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-{{ 'check-circle' if usuario.activo else 'times-circle' }}"></i></span>
+                                    <input type="text" class="form-control" value="{{ 'Activo' if usuario.activo else 'Inactivo' }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Registro</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <input type="text" class="form-control" value="{{ usuario.fecha_registro.strftime('%d/%m/%Y') if usuario.fecha_registro else 'N/A' }}" disabled>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <div>
+                                <a href="{{ url_for('user.cambiar_password') }}" class="btn btn-outline-warning me-2">
+                                    <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Validar nombre completo (solo letras y espacios)
+    const nombreInput = document.getElementById('nombre_completo');
+    if (nombreInput) {
+        nombreInput.addEventListener('input', function() {
+            // Permitir solo letras, espacios y caracteres especiales del español
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+        });
+        
+        nombreInput.addEventListener('blur', function() {
+            if (this.value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(this.value)) {
+                this.setCustomValidity('Por favor solo ingrese letras y espacios');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+                if (this.value) {
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    }
+    
+    // Validar teléfono (solo números, exactamente 10)
+    const telefonoInput = document.getElementById('telefono');
+    if (telefonoInput) {
+        telefonoInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+            // Actualizar clases de validación
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+        
+        telefonoInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value && this.value.length === 10) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+        
+        telefonoInput.addEventListener('keypress', function(e) {
+            // Detectar si se intenta ingresar una letra
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+                // Remover el mensaje después de un momento
+                setTimeout(() => {
+                    if (this.value.length === 10) {
+                        this.setCustomValidity('');
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    // Validar cédula (solo números, exactamente 10)
+    const cedulaInput = document.getElementById('cedula');
+    if (cedulaInput && !cedulaInput.disabled) {
+        cedulaInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+            // Actualizar clases de validación
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+        
+        cedulaInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value && this.value.length === 10) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+        
+        cedulaInput.addEventListener('keypress', function(e) {
+            // Detectar si se intenta ingresar una letra
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+                // Remover el mensaje después de un momento
+                setTimeout(() => {
+                    if (this.value.length === 10) {
+                        this.setCustomValidity('');
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    // Validar email
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.setCustomValidity('Por favor ingrese un correo electrónico válido');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    }
+    
+    // Validar formulario antes de enviar
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Validar nombre
+            if (nombreInput && nombreInput.value) {
+                if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(nombreInput.value)) {
+                    nombreInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar teléfono
+            if (telefonoInput && telefonoInput.value) {
+                if (telefonoInput.value.length !== 10) {
+                    telefonoInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar cédula
+            if (cedulaInput && !cedulaInput.disabled && cedulaInput.value) {
+                if (cedulaInput.value.length !== 10) {
+                    cedulaInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar email
+            if (emailInput && emailInput.value) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor, corrija los errores en el formulario antes de enviar.');
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.input-group .is-valid,
+.input-group .is-invalid {
+    border-color: inherit;
+}
+
+.input-group .is-valid ~ .input-group-text,
+.input-group .is-invalid ~ .input-group-text {
+    border-color: inherit;
+}
+</style>
+{% endblock %}
+
+{% block docente_content %}
+<div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Mi Perfil</h4>
+                        <span class="badge bg-light text-dark">{{ usuario.rol.title() }}</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Foto de Perfil -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <div class="mb-3">
+                                    {% if usuario.foto_perfil %}
+                                    <img src="{{ url_for('foto_perfil', filename=usuario.foto_perfil) }}" 
+                                         alt="Foto de perfil" 
+                                         class="rounded-circle border border-primary" 
+                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                         style="width: 150px; height: 150px; font-size: 4rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="foto_perfil" class="form-label">Cambiar Foto de Perfil</label>
+                                    <input type="file" class="form-control" id="foto_perfil" name="foto_perfil" accept="image/png,image/jpeg,image/jpg,image/gif" onchange="previewImage(this)">
+                                    <div class="form-text">Formatos permitidos: PNG, JPG, JPEG, GIF. Tamaño máximo: 5MB</div>
+                                    <div id="imagePreview" class="mt-2" style="display: none;">
+                                        <img id="previewImg" src="" alt="Vista previa" class="rounded-circle border border-primary mt-2" style="width: 150px; height: 150px; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username" value="{{ usuario.username }}" disabled>
+                                </div>
+                                <div class="form-text">El nombre de usuario no se puede cambiar</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email if usuario.email else '' }}" placeholder="Ingrese su correo electrónico">
+                                </div>
+                                <div class="form-text">Ingrese su correo electrónico para recibir notificaciones</div>
+                                <div class="invalid-feedback">Por favor ingrese un correo electrónico válido</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" value="{{ usuario.nombre_completo or '' }}" placeholder="Ingrese su nombre completo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios">
+                            </div>
+                            <div class="form-text">Solo se permiten letras y espacios</div>
+                            <div class="invalid-feedback">Por favor solo ingrese letras y espacios</div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Número Telefónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono or '' }}" placeholder="0987654321" maxlength="10" pattern="[0-9]{10}">
+                                </div>
+                                <div class="form-text">Ingrese 10 dígitos</div>
+                                <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="cedula" class="form-label">Cédula</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                    <input type="text" class="form-control" id="cedula" name="cedula" value="{{ usuario.cedula if usuario.cedula and not usuario.cedula.startswith('TEMP') else '' }}" placeholder="Ingrese su cédula" pattern="[0-9]{10}" maxlength="10" title="La cédula debe contener exactamente 10 números">
+                                    <div class="form-text">Ingrese su número de cédula (10 dígitos)</div>
+                                    <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ usuario.direccion or '' }}" placeholder="Ingrese su dirección completa">
+                            </div>
+                        </div>
+                        
+                        {% if usuario.rol == 'usuario' %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="carrera_id" class="form-label">Carrera</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                    <select class="form-select" id="carrera_id" name="carrera_id">
+                                        <option value="">Seleccione una carrera</option>
+                                        {% for carrera in carreras %}
+                                        <option value="{{ carrera.id }}" {% if usuario.carrera_id == carrera.id %}selected{% endif %}>{{ carrera.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-text">Seleccione su carrera de estudio</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="semestre" class="form-label">Semestre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <select class="form-select" id="semestre" name="semestre">
+                                        <option value="">Seleccione un semestre</option>
+                                        <option value="1" {% if usuario.semestre == 1 %}selected{% endif %}>Primer Semestre</option>
+                                        <option value="2" {% if usuario.semestre == 2 %}selected{% endif %}>Segundo Semestre</option>
+                                        <option value="3" {% if usuario.semestre == 3 %}selected{% endif %}>Tercer Semestre</option>
+                                        <option value="4" {% if usuario.semestre == 4 %}selected{% endif %}>Cuarto Semestre</option>
+                                    </select>
+                                </div>
+                                <div class="form-text">Seleccione su semestre actual</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if usuario.rol == 'docente' or usuario.rol == 'admin' %}
+                        <div class="mb-3">
+                            <label for="curso" class="form-label">
+                                {% if usuario.rol == 'docente' %}
+                                    Curso que Dirige/Representa
+                                {% else %}
+                                    Área/Departamento
+                                {% endif %}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-{{ 'chalkboard-teacher' if usuario.rol == 'docente' else 'building' }}"></i>
+                                </span>
+                                <input type="text" class="form-control" id="curso" name="curso" value="{{ usuario.curso or '' }}" 
+                                    placeholder="{% if usuario.rol == 'docente' %}Ej: Primer Semestre, Segundo Semestre, etc.{% else %}Ej: Coordinación de Bienestar, Administración, etc.{% endif %}">
+                            </div>
+                            <div class="form-text">
+                                {% if usuario.rol == 'docente' %}
+                                    Especifique el curso o semestre que dirige o representa
+                                {% else %}
+                                    Especifique el área o departamento al que pertenece (opcional)
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Rol</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                    <input type="text" class="form-control" value="{{ usuario.rol.title() }}" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Estado</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-{{ 'check-circle' if usuario.activo else 'times-circle' }}"></i></span>
+                                    <input type="text" class="form-control" value="{{ 'Activo' if usuario.activo else 'Inactivo' }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Registro</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <input type="text" class="form-control" value="{{ usuario.fecha_registro.strftime('%d/%m/%Y') if usuario.fecha_registro else 'N/A' }}" disabled>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <div>
+                                <a href="{{ url_for('user.cambiar_password') }}" class="btn btn-outline-warning me-2">
+                                    <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Validar nombre completo (solo letras y espacios)
+    const nombreInput = document.getElementById('nombre_completo');
+    if (nombreInput) {
+        nombreInput.addEventListener('input', function() {
+            // Permitir solo letras, espacios y caracteres especiales del español
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+        });
+        
+        nombreInput.addEventListener('blur', function() {
+            if (this.value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(this.value)) {
+                this.setCustomValidity('Por favor solo ingrese letras y espacios');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+                if (this.value) {
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    }
+    
+    // Validar teléfono (solo números, exactamente 10)
+    const telefonoInput = document.getElementById('telefono');
+    if (telefonoInput) {
+        telefonoInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+            // Actualizar clases de validación
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+        
+        telefonoInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value && this.value.length === 10) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+        
+        telefonoInput.addEventListener('keypress', function(e) {
+            // Detectar si se intenta ingresar una letra
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+                // Remover el mensaje después de un momento
+                setTimeout(() => {
+                    if (this.value.length === 10) {
+                        this.setCustomValidity('');
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    // Validar cédula (solo números, exactamente 10)
+    const cedulaInput = document.getElementById('cedula');
+    if (cedulaInput && !cedulaInput.disabled) {
+        cedulaInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+            // Actualizar clases de validación
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+        
+        cedulaInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value && this.value.length === 10) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+        
+        cedulaInput.addEventListener('keypress', function(e) {
+            // Detectar si se intenta ingresar una letra
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+                // Remover el mensaje después de un momento
+                setTimeout(() => {
+                    if (this.value.length === 10) {
+                        this.setCustomValidity('');
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    // Validar email
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.setCustomValidity('Por favor ingrese un correo electrónico válido');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    }
+    
+    // Validar formulario antes de enviar
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Validar nombre
+            if (nombreInput && nombreInput.value) {
+                if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(nombreInput.value)) {
+                    nombreInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar teléfono
+            if (telefonoInput && telefonoInput.value) {
+                if (telefonoInput.value.length !== 10) {
+                    telefonoInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar cédula
+            if (cedulaInput && !cedulaInput.disabled && cedulaInput.value) {
+                if (cedulaInput.value.length !== 10) {
+                    cedulaInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar email
+            if (emailInput && emailInput.value) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor, corrija los errores en el formulario antes de enviar.');
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.input-group .is-valid,
+.input-group .is-invalid {
+    border-color: inherit;
+}
+
+.input-group .is-valid ~ .input-group-text,
+.input-group .is-invalid ~ .input-group-text {
+    border-color: inherit;
+}
+</style>
+{% endblock %}
+
+{% block user_content %}
+<div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Mi Perfil</h4>
+                        <span class="badge bg-light text-dark">{{ usuario.rol.title() }}</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Foto de Perfil -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <div class="mb-3">
+                                    {% if usuario.foto_perfil %}
+                                    <img src="{{ url_for('foto_perfil', filename=usuario.foto_perfil) }}" 
+                                         alt="Foto de perfil" 
+                                         class="rounded-circle border border-primary" 
+                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                         style="width: 150px; height: 150px; font-size: 4rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="foto_perfil" class="form-label">Cambiar Foto de Perfil</label>
+                                    <input type="file" class="form-control" id="foto_perfil" name="foto_perfil" accept="image/png,image/jpeg,image/jpg,image/gif" onchange="previewImage(this)">
+                                    <div class="form-text">Formatos permitidos: PNG, JPG, JPEG, GIF. Tamaño máximo: 5MB</div>
+                                    <div id="imagePreview" class="mt-2" style="display: none;">
+                                        <img id="previewImg" src="" alt="Vista previa" class="rounded-circle border border-primary mt-2" style="width: 150px; height: 150px; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username" value="{{ usuario.username }}" disabled>
+                                </div>
+                                <div class="form-text">El nombre de usuario no se puede cambiar</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email if usuario.email else '' }}" placeholder="Ingrese su correo electrónico">
+                                </div>
+                                <div class="form-text">Ingrese su correo electrónico para recibir notificaciones</div>
+                                <div class="invalid-feedback">Por favor ingrese un correo electrónico válido</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" value="{{ usuario.nombre_completo or '' }}" placeholder="Ingrese su nombre completo" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios">
+                            </div>
+                            <div class="form-text">Solo se permiten letras y espacios</div>
+                            <div class="invalid-feedback">Por favor solo ingrese letras y espacios</div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Número Telefónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono or '' }}" placeholder="0987654321" maxlength="10" pattern="[0-9]{10}">
+                                </div>
+                                <div class="form-text">Ingrese 10 dígitos</div>
+                                <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="cedula" class="form-label">Cédula</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                    <input type="text" class="form-control" id="cedula" name="cedula" value="{{ usuario.cedula if usuario.cedula and not usuario.cedula.startswith('TEMP') else '' }}" placeholder="Ingrese su cédula" pattern="[0-9]{10}" maxlength="10" title="La cédula debe contener exactamente 10 números">
+                                    <div class="form-text">Ingrese su número de cédula (10 dígitos)</div>
+                                    <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ usuario.direccion or '' }}" placeholder="Ingrese su dirección completa">
+                            </div>
+                        </div>
+                        
+                        {% if usuario.rol == 'usuario' %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="carrera_id" class="form-label">Carrera</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                    <select class="form-select" id="carrera_id" name="carrera_id">
+                                        <option value="">Seleccione una carrera</option>
+                                        {% for carrera in carreras %}
+                                        <option value="{{ carrera.id }}" {% if usuario.carrera_id == carrera.id %}selected{% endif %}>{{ carrera.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-text">Seleccione su carrera de estudio</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="semestre" class="form-label">Semestre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <select class="form-select" id="semestre" name="semestre">
+                                        <option value="">Seleccione un semestre</option>
+                                        <option value="1" {% if usuario.semestre == 1 %}selected{% endif %}>Primer Semestre</option>
+                                        <option value="2" {% if usuario.semestre == 2 %}selected{% endif %}>Segundo Semestre</option>
+                                        <option value="3" {% if usuario.semestre == 3 %}selected{% endif %}>Tercer Semestre</option>
+                                        <option value="4" {% if usuario.semestre == 4 %}selected{% endif %}>Cuarto Semestre</option>
+                                    </select>
+                                </div>
+                                <div class="form-text">Seleccione su semestre actual</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if usuario.rol == 'docente' or usuario.rol == 'admin' %}
+                        <div class="mb-3">
+                            <label for="curso" class="form-label">
+                                {% if usuario.rol == 'docente' %}
+                                    Curso que Dirige/Representa
+                                {% else %}
+                                    Área/Departamento
+                                {% endif %}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-{{ 'chalkboard-teacher' if usuario.rol == 'docente' else 'building' }}"></i>
+                                </span>
+                                <input type="text" class="form-control" id="curso" name="curso" value="{{ usuario.curso or '' }}" 
+                                    placeholder="{% if usuario.rol == 'docente' %}Ej: Primer Semestre, Segundo Semestre, etc.{% else %}Ej: Coordinación de Bienestar, Administración, etc.{% endif %}">
+                            </div>
+                            <div class="form-text">
+                                {% if usuario.rol == 'docente' %}
+                                    Especifique el curso o semestre que dirige o representa
+                                {% else %}
+                                    Especifique el área o departamento al que pertenece (opcional)
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Rol</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                    <input type="text" class="form-control" value="{{ usuario.rol.title() }}" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Estado</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-{{ 'check-circle' if usuario.activo else 'times-circle' }}"></i></span>
+                                    <input type="text" class="form-control" value="{{ 'Activo' if usuario.activo else 'Inactivo' }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Registro</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <input type="text" class="form-control" value="{{ usuario.fecha_registro.strftime('%d/%m/%Y') if usuario.fecha_registro else 'N/A' }}" disabled>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <div>
+                                <a href="{{ url_for('user.cambiar_password') }}" class="btn btn-outline-warning me-2">
+                                    <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Validar nombre completo (solo letras y espacios)
+    const nombreInput = document.getElementById('nombre_completo');
+    if (nombreInput) {
+        nombreInput.addEventListener('input', function() {
+            // Permitir solo letras, espacios y caracteres especiales del español
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+        });
+        
+        nombreInput.addEventListener('blur', function() {
+            if (this.value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(this.value)) {
+                this.setCustomValidity('Por favor solo ingrese letras y espacios');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+                if (this.value) {
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    }
+    
+    // Validar teléfono (solo números, exactamente 10)
+    const telefonoInput = document.getElementById('telefono');
+    if (telefonoInput) {
+        telefonoInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+            // Actualizar clases de validación
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+        
+        telefonoInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value && this.value.length === 10) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+        
+        telefonoInput.addEventListener('keypress', function(e) {
+            // Detectar si se intenta ingresar una letra
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+                // Remover el mensaje después de un momento
+                setTimeout(() => {
+                    if (this.value.length === 10) {
+                        this.setCustomValidity('');
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    // Validar cédula (solo números, exactamente 10)
+    const cedulaInput = document.getElementById('cedula');
+    if (cedulaInput && !cedulaInput.disabled) {
+        cedulaInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+            // Actualizar clases de validación
+            if (this.value.length === 10) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else if (this.value.length > 0) {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+        
+        cedulaInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value && this.value.length === 10) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+        
+        cedulaInput.addEventListener('keypress', function(e) {
+            // Detectar si se intenta ingresar una letra
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+                // Remover el mensaje después de un momento
+                setTimeout(() => {
+                    if (this.value.length === 10) {
+                        this.setCustomValidity('');
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                }, 2000);
+            }
+        });
+    }
+    
+    // Validar email
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.setCustomValidity('Por favor ingrese un correo electrónico válido');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                if (this.value) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            }
+        });
+    }
+    
+    // Validar formulario antes de enviar
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Validar nombre
+            if (nombreInput && nombreInput.value) {
+                if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(nombreInput.value)) {
+                    nombreInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar teléfono
+            if (telefonoInput && telefonoInput.value) {
+                if (telefonoInput.value.length !== 10) {
+                    telefonoInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar cédula
+            if (cedulaInput && !cedulaInput.disabled && cedulaInput.value) {
+                if (cedulaInput.value.length !== 10) {
+                    cedulaInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validar email
+            if (emailInput && emailInput.value) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor, corrija los errores en el formulario antes de enviar.');
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.input-group .is-valid,
+.input-group .is-invalid {
+    border-color: inherit;
+}
+
+.input-group .is-valid ~ .input-group-text,
+.input-group .is-invalid ~ .input-group-text {
+    border-color: inherit;
+}
+</style>
+{% endblock %}
+

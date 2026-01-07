@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cita Aprobada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .appointment-details {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success-badge {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✅ Cita Aprobada</h1>
+        <p>Coordinación de Bienestar Institucional</p>
+    </div>
+    
+    <div class="content">
+        <h2>¡Hola {{ usuario.nombre_completo or usuario.username }}!</h2>
+        <p><strong>Su cita ha sido aceptada.</strong></p>
+        
+        <div class="success-badge">
+            ✅ ESTADO: CONFIRMADA
+        </div>
+        
+        <div class="appointment-details">
+            <h3>📋 Detalles de su Cita Aceptada</h3>
+            <div class="detail-row">
+                <span class="detail-label">Fecha:</span>
+                <span><strong>{{ cita.fecha.strftime('%d/%m/%Y') }}</strong></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Hora:</span>
+                <span><strong>{{ cita.hora.strftime('%H:%M') }}</strong></span>
+            </div>
+            <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0; text-align: center; border-left: 4px solid #28a745;">
+                <p style="margin: 0; font-size: 18px; font-weight: bold; color: #155724;">
+                    📅 Fecha: {{ cita.fecha.strftime('%d/%m/%Y') }} | 🕐 Hora: {{ cita.hora.strftime('%H:%M') }}
+                </p>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Motivo:</span>
+                <span>{{ cita.motivo }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Estado:</span>
+                <span style="color: #28a745; font-weight: bold;">{{ cita.estado.title() }}</span>
+            </div>
+            {% if cita.gestora %}
+            <div class="detail-row">
+                <span class="detail-label">Atenderá:</span>
+                <span><strong>{{ cita.gestora.nombre_completo }}</strong><br>
+                <small>{{ cita.gestora.curso or 'GESTORA DE BIENESTAR INSTITUCIONAL' }}</small></span>
+            </div>
+            {% endif %}
+            {% if usuario.email %}
+            <div class="detail-row">
+                <span class="detail-label">Correo de notificación:</span>
+                <span>{{ usuario.email }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <p><strong>📌 Información importante:</strong></p>
+        <ul>
+            <li>Su cita está <strong>confirmada</strong> y lista para la fecha y hora programadas</li>
+            <li>Por favor llegue <strong>10 minutos antes</strong> de su cita</li>
+            <li>Traiga su <strong>cédula de identidad</strong></li>
+            <li>Si necesita cancelar o reprogramar, contacte con anticipación</li>
+        </ul>
+        
+        <p style="background: #d4edda; padding: 15px; border-radius: 5px; border-left: 4px solid #28a745;">
+            <strong>✅ Nota:</strong> Esta es una notificación automática enviada al correo registrado en tu perfil: <strong>{{ usuario.email }}</strong>
+        </p>
+        
+        <div style="text-align: center;">
+            <a href="#" class="btn">Ver Mis Citas</a>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Coordinación de Bienestar Institucional</strong></p>
+            <p>Instituto Superior Tecnológico TENA</p>
+            <p>📧 bienestar@instituto.edu | 📞 (06) 288-1234</p>
+            <p>📍 Tena, Ecuador</p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

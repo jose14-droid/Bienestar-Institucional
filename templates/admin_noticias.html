@@ -1,0 +1,148 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Gestión de Noticias - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-newspaper me-2"></i>Gestión de Noticias</h2>
+    <a href="{{ url_for('admin.nueva_noticia') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nueva Noticia
+    </a>
+</div>
+
+<div class="container-fluid px-0">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% if noticias %}
+    <div class="row">
+        {% for noticia in noticias %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="badge bg-{{ 'primary' if noticia.categoria == 'general' else 'success' if noticia.categoria == 'importante' else 'warning' if noticia.categoria == 'anuncio' else 'info' }}">
+                        {{ noticia.categoria.title() }}
+                    </span>
+                    <span class="badge bg-{{ 'success' if noticia.activa else 'secondary' }}">
+                        {{ 'Activa' if noticia.activa else 'Inactiva' }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ noticia.titulo }}</h5>
+                    <p class="card-text">{{ noticia.contenido[:150] }}{% if noticia.contenido|length > 150 %}...{% endif %}</p>
+                    
+                    <div class="mb-2">
+                        <i class="fas fa-user text-primary me-2"></i>
+                        <strong>Autor:</strong> {{ noticia.autor }}
+                    </div>
+                    <div class="mb-2">
+                        <i class="fas fa-calendar text-success me-2"></i>
+                        <strong>Publicado:</strong> {{ noticia.fecha_publicacion.strftime('%d/%m/%Y %H:%M') }}
+                    </div>
+                    {% if noticia.comentarios %}
+                    <div class="mb-2">
+                        <i class="fas fa-comments text-info me-2"></i>
+                        <strong>Comentarios:</strong> {{ noticia.comentarios|length }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            ID: {{ noticia.id }}
+                        </small>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('public.noticias') }}" class="btn btn-outline-info" title="Ver Pública">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button class="btn btn-outline-{{ 'success' if noticia.activa else 'secondary' }}" 
+                                    title="{{ 'Desactivar' if noticia.activa else 'Activar' }}"
+                                    onclick="toggleNoticia({{ noticia.id }}, {{ 'true' if noticia.activa else 'false' }})">
+                                <i class="fas fa-{{ 'eye-slash' if noticia.activa else 'eye' }}"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" title="Eliminar" onclick="eliminarNoticia({{ noticia.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <div class="card-body py-5">
+                    <i class="fas fa-newspaper text-muted mb-3" style="font-size: 4rem;"></i>
+                    <h4 class="text-muted">No hay noticias creadas</h4>
+                    <p class="text-muted">Crea la primera noticia para comenzar</p>
+                    <a href="{{ url_for('admin.nueva_noticia') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Crear Primera Noticia
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+</div>
+
+<script>
+function toggleNoticia(id, activa) {
+    const esActiva = activa === 'true' || activa === true;
+    if (confirm('¿Estás seguro de que deseas ' + (esActiva ? 'desactivar' : 'activar') + ' esta noticia?')) {
+        fetch('/admin/noticias/' + id + '/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error al actualizar la noticia');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al actualizar la noticia');
+        });
+    }
+}
+
+function eliminarNoticia(id) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.')) {
+        fetch('/admin/noticias/' + id + '/eliminar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error al eliminar la noticia');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al eliminar la noticia');
+        });
+    }
+}
+</script>
+{% endblock %}
+

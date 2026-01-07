@@ -1,0 +1,278 @@
+{% extends "docente_base.html" %}
+
+{% block title %}Citas - Panel Docente{% endblock %}
+
+{% block docente_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Mis Citas Agendadas</h1>
+        <p class="text-muted">Citas que he agendado y opción de reagendarlas</p>
+    </div>
+    <div class="text-end">
+        <a href="{{ url_for('docente.exportar_reporte') }}" class="btn btn-success">
+            <i class="fas fa-download me-2"></i>Exportar Reporte
+        </a>
+    </div>
+</div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ citas|length }}</h4>
+                    <p class="mb-0">Total Citas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ citas|selectattr('estado', 'equalto', 'pendiente')|list|length }}</h4>
+                    <p class="mb-0">Pendientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ citas|selectattr('estado', 'equalto', 'confirmada')|list|length }}</h4>
+                    <p class="mb-0">Confirmadas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ citas|selectattr('estado', 'equalto', 'cancelada')|list|length }}</h4>
+                    <p class="mb-0">Canceladas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Options -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Filtros</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select" id="estadoFilter">
+                                <option value="">Todos los Estados</option>
+                                <option value="pendiente">Pendientes</option>
+                                <option value="confirmada">Confirmadas</option>
+                                <option value="pospuesta">Pospuestas</option>
+                                <option value="cancelada">Canceladas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <input type="date" class="form-control" id="fechaFilter" placeholder="Filtrar por fecha">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <input type="text" class="form-control" id="usuarioFilter" placeholder="Buscar por usuario">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                <i class="fas fa-times me-2"></i>Limpiar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Appointments Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Lista de Citas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="citasTable">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Motivo</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Estado</th>
+                                    <th>Posposición</th>
+                                    <th>Fecha Creación</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if citas %}
+                                {% for cita in citas %}
+                                <tr data-estado="{{ cita.estado }}" data-fecha="{{ cita.fecha.strftime('%Y-%m-%d') }}" data-usuario="{{ (cita.usuario.nombre_completo or cita.usuario.username).lower() }}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                                                {{ (cita.usuario.nombre_completo or cita.usuario.username)[0] }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ cita.usuario.nombre_completo or cita.usuario.username }}</div>
+                                                <small class="text-muted">{{ cita.usuario.cedula or 'Sin cédula' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ cita.motivo }}</td>
+                                    <td>{{ cita.fecha.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ cita.hora.strftime('%H:%M') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'warning' if cita.estado == 'pendiente' or cita.estado == 'pospuesta' else 'success' if cita.estado == 'confirmada' else 'danger' }}">
+                                            {{ cita.estado.title() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if cita.esta_pospuesta() %}
+                                            <div class="alert alert-warning mb-0 p-2">
+                                                <strong><i class="fas fa-calendar-alt me-1"></i>Pospuesta:</strong><br>
+                                                <small>Nueva fecha: {{ cita.fecha_pospuesta.strftime('%d/%m/%Y') }} a las {{ cita.hora_pospuesta.strftime('%H:%M') }}</small><br>
+                                                <small><strong>Motivo:</strong> {{ cita.motivo_posposicion }}</small>
+                                                {% if cita.get_archivos_posposicion() %}
+                                                    <br><small>
+                                                        <strong>Archivos:</strong>
+                                                        {% for archivo in cita.get_archivos_posposicion() %}
+                                                            <a href="{{ url_for('cita.descargar_archivo_posposicion', cita_id=cita.id, filename=archivo) }}" class="text-primary">
+                                                                <i class="fas fa-file me-1"></i>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}
+                                                            </a>
+                                                        {% endfor %}
+                                                    </small>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ cita.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>
+                                        {% if cita.observaciones %}
+                                            <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ cita.observaciones }}">
+                                                {{ cita.observaciones }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">Sin observaciones</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            {% if cita.estado == 'pendiente' or cita.estado == 'confirmada' %}
+                                            <a href="{{ url_for('cita.reagendar_cita', cita_id=cita.id) }}" class="btn btn-sm btn-warning" title="Reagendar Cita (requiere 24 horas de anticipación)">
+                                                <i class="fas fa-calendar-check me-1"></i>Reagendar
+                                            </a>
+                                            {% else %}
+                                            <span class="badge bg-secondary">No se puede reagendar</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">
+                                        <i class="fas fa-calendar-times text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <h4 class="text-muted">No has agendado citas</h4>
+                                        <p class="text-muted">
+                                            Aún no has agendado ninguna cita. Puedes agendar una nueva cita desde el menú.
+                                        </p>
+                                        <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-primary mt-3">
+                                            <i class="fas fa-calendar-plus me-2"></i>Agendar Nueva Cita
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('docente.usuarios') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-users me-2"></i>Ver Usuarios
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('docente.reportes') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Ver Reportes
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-home me-2"></i>Volver al Panel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterTable() {
+    const estadoFilter = document.getElementById('estadoFilter').value.toLowerCase();
+    const fechaFilter = document.getElementById('fechaFilter').value;
+    const usuarioFilter = document.getElementById('usuarioFilter').value.toLowerCase();
+    const rows = document.querySelectorAll('#citasTable tbody tr');
+    
+    rows.forEach(row => {
+        const estado = row.getAttribute('data-estado').toLowerCase();
+        const fecha = row.getAttribute('data-fecha');
+        const usuario = row.getAttribute('data-usuario');
+        
+        let showRow = true;
+        
+        if (estadoFilter && estado !== estadoFilter) {
+            showRow = false;
+        }
+        
+        if (fechaFilter && fecha !== fechaFilter) {
+            showRow = false;
+        }
+        
+        if (usuarioFilter && !usuario.includes(usuarioFilter)) {
+            showRow = false;
+        }
+        
+        row.style.display = showRow ? '' : 'none';
+    });
+}
+
+function clearFilters() {
+    document.getElementById('estadoFilter').value = '';
+    document.getElementById('fechaFilter').value = '';
+    document.getElementById('usuarioFilter').value = '';
+    filterTable();
+}
+
+document.getElementById('estadoFilter').addEventListener('change', filterTable);
+document.getElementById('fechaFilter').addEventListener('change', filterTable);
+document.getElementById('usuarioFilter').addEventListener('input', filterTable);
+</script>
+{% endblock %}

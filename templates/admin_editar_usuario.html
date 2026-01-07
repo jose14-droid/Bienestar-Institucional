@@ -1,0 +1,199 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Editar Usuario - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Editar Usuario: {{ usuario.nombre_completo or usuario.username }}</h4>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" value="{{ usuario.nombre_completo or '' }}" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="Solo se permiten letras y espacios">
+                            <small class="form-text text-muted">Solo se permiten letras y espacios</small>
+                            <div class="invalid-feedback">Por favor solo ingrese letras y espacios</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="username" value="{{ usuario.username }}" disabled>
+                            <small class="form-text text-muted">El nombre de usuario no se puede cambiar</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email or '' }}" placeholder="Ingrese su correo electrónico">
+                            <div class="form-text">Ingrese su correo electrónico para recibir notificaciones</div>
+                            <div class="invalid-feedback">Por favor ingrese un correo electrónico válido</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono or '' }}" maxlength="10" pattern="[0-9]{10}" title="Debe contener exactamente 10 números">
+                            <small class="form-text text-muted">10 dígitos numéricos</small>
+                            <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cedula" class="form-label">Cédula</label>
+                            <input type="text" class="form-control" id="cedula" name="cedula" value="{{ usuario.cedula or '' }}" maxlength="10" pattern="[0-9]{10}" title="Debe contener exactamente 10 números">
+                            <small class="form-text text-muted">10 dígitos numéricos</small>
+                            <div class="invalid-feedback">Por favor solo ingrese números, 10 números</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="rol" class="form-label">Rol</label>
+                            <select class="form-select" id="rol" name="rol" required>
+                                <option value="usuario" {% if usuario.rol == 'usuario' %}selected{% endif %}>Usuario</option>
+                                <option value="docente" {% if usuario.rol == 'docente' %}selected{% endif %}>Docente</option>
+                                <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <textarea class="form-control" id="direccion" name="direccion" rows="2">{{ usuario.direccion or '' }}</textarea>
+                    </div>
+                    {% if usuario.rol in ['docente', 'admin'] %}
+                    <div class="mb-3">
+                        <label for="curso" class="form-label">
+                            {% if usuario.rol == 'docente' %}
+                                Curso que Dirige/Representa
+                            {% else %}
+                                Área/Departamento
+                            {% endif %}
+                        </label>
+                        <input type="text" class="form-control" id="curso" name="curso" value="{{ usuario.curso or '' }}" placeholder="{% if usuario.rol == 'docente' %}Ej: Primer Semestre, Segundo Semestre, etc.{% else %}Ej: Coordinación de Bienestar, Administración, etc.{% endif %}">
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="activo" name="activo" {% if usuario.activo %}checked{% endif %}>
+                            <label class="form-check-label" for="activo">
+                                Usuario Activo
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('admin.usuarios') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validar nombre completo (solo letras y espacios)
+    const nombreInput = document.getElementById('nombre_completo');
+    if (nombreInput) {
+        nombreInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+        });
+        nombreInput.addEventListener('blur', function() {
+            if (this.value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(this.value)) {
+                this.setCustomValidity('Por favor solo ingrese letras y espacios');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
+    
+    // Validar teléfono (solo números, exactamente 10)
+    const telefonoInput = document.getElementById('telefono');
+    if (telefonoInput) {
+        telefonoInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+        telefonoInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+        telefonoInput.addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            }
+        });
+    }
+    
+    // Validar cédula (solo números, exactamente 10)
+    const cedulaInput = document.getElementById('cedula');
+    if (cedulaInput) {
+        cedulaInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+        cedulaInput.addEventListener('blur', function() {
+            if (this.value && this.value.length !== 10) {
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+        cedulaInput.addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                this.setCustomValidity('Por favor solo ingrese números, 10 números');
+                this.classList.add('is-invalid');
+            }
+        });
+    }
+    
+    // Validar email
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.setCustomValidity('Por favor ingrese un correo electrónico válido');
+                this.classList.add('is-invalid');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

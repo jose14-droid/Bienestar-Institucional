@@ -1,0 +1,281 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Resetear Credenciales - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user-lock me-2"></i>Resetear Credenciales</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtrar por Rol</h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admin.resetear_credenciales') }}" class="row g-3">
+            <div class="col-md-4">
+                <label for="rol" class="form-label">Rol</label>
+                <select class="form-select" id="rol" name="rol">
+                    <option value="">Todos los roles</option>
+                    <option value="admin" {% if rol_filtro == 'admin' %}selected{% endif %}>Administrador</option>
+                    <option value="docente" {% if rol_filtro == 'docente' %}selected{% endif %}>Docente</option>
+                    <option value="usuario" {% if rol_filtro == 'usuario' %}selected{% endif %}>Usuario</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-2"></i>Filtrar
+                </button>
+                <a href="{{ url_for('admin.resetear_credenciales') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-2"></i>Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Lista de Usuarios</h5>
+    </div>
+    <div class="card-body">
+        {% if usuarios %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Rol</th>
+                        <th>Email</th>
+                        <th>Cédula</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td><strong>{{ usuario.username }}</strong></td>
+                        <td>{{ usuario.nombre_completo or 'No especificado' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if usuario.rol == 'admin' else 'primary' if usuario.rol == 'docente' else 'info' }}">
+                                {{ usuario.rol.title() }}
+                            </span>
+                        </td>
+                        <td>{{ usuario.email or '<span class="text-muted">Sin email</span>'|safe }}</td>
+                        <td>{{ usuario.cedula or '<span class="text-muted">Sin cédula</span>'|safe }}</td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#resetModal{{ usuario.id }}">
+                                <i class="fas fa-key me-1"></i>Resetear
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Modal para resetear credenciales -->
+                    <div class="modal fade" id="resetModal{{ usuario.id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-user-lock me-2"></i>Resetear Credenciales
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="POST" action="{{ url_for('admin.resetear_credenciales') }}" id="resetForm{{ usuario.id }}">
+                                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                                    {% if rol_filtro %}
+                                    <input type="hidden" name="rol_filtro" value="{{ rol_filtro }}">
+                                    {% endif %}
+                                    <div class="modal-body">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <strong>Usuario:</strong> {{ usuario.username }}<br>
+                                            <strong>Nombre:</strong> {{ usuario.nombre_completo or 'No especificado' }}<br>
+                                            <strong>Rol:</strong> 
+                                            <span class="badge bg-{{ 'danger' if usuario.rol == 'admin' else 'primary' if usuario.rol == 'docente' else 'info' }}">
+                                                {{ usuario.rol.title() }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="nueva_password{{ usuario.id }}" class="form-label">Nueva Contraseña <span class="text-danger">*</span></label>
+                                            <input type="password" class="form-control" id="nueva_password{{ usuario.id }}" name="nueva_password" required minlength="6" autocomplete="new-password">
+                                            <div class="form-text">Mínimo 6 caracteres</div>
+                                            <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres</div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="confirmar_password{{ usuario.id }}" class="form-label">Confirmar Contraseña <span class="text-danger">*</span></label>
+                                            <input type="password" class="form-control" id="confirmar_password{{ usuario.id }}" name="confirmar_password" required minlength="6" autocomplete="new-password">
+                                            <div class="invalid-feedback">Las contraseñas no coinciden</div>
+                                        </div>
+                                        
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>Advertencia:</strong> El usuario deberá cambiar su contraseña en el próximo inicio de sesión.
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBtn{{ usuario.id }}">Cancelar</button>
+                                        <button type="submit" class="btn btn-warning" id="submitBtn{{ usuario.id }}">
+                                            <i class="fas fa-key me-2"></i><span class="btn-text">Resetear Credenciales</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-loading" id="loading{{ usuario.id }}" style="display: none;">
+                                        <div class="text-center p-3">
+                                            <div class="spinner-border text-warning" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                            <p class="mt-2 mb-0">Procesando...</p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No se encontraron usuarios con los filtros seleccionados.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Envío AJAX para evitar recargas y congelamientos
+document.addEventListener('DOMContentLoaded', function() {
+    const modals = document.querySelectorAll('[id^="resetModal"]');
+    modals.forEach(modal => {
+        const form = modal.querySelector('form');
+        if (!form) return;
+
+        const nuevaPasswordInput = form.querySelector('input[name="nueva_password"]');
+        const confirmarPasswordInput = form.querySelector('input[name="confirmar_password"]');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const cancelBtn = modal.querySelector('button[data-bs-dismiss="modal"]');
+        const modalBody = form.querySelector('.modal-body');
+        const loadingDiv = modal.querySelector('.modal-loading');
+        let isSubmitting = false;
+
+        function validatePasswords() {
+            const nuevaPassword = nuevaPasswordInput.value;
+            const confirmarPassword = confirmarPasswordInput.value;
+
+            if (nuevaPassword.length > 0 && nuevaPassword.length < 6) {
+                nuevaPasswordInput.setCustomValidity('La contraseña debe tener al menos 6 caracteres');
+                nuevaPasswordInput.classList.add('is-invalid');
+                nuevaPasswordInput.classList.remove('is-valid');
+            } else if (nuevaPassword.length >= 6) {
+                nuevaPasswordInput.setCustomValidity('');
+                nuevaPasswordInput.classList.remove('is-invalid');
+                if (nuevaPassword.length > 0) nuevaPasswordInput.classList.add('is-valid');
+            } else {
+                nuevaPasswordInput.setCustomValidity('');
+                nuevaPasswordInput.classList.remove('is-invalid', 'is-valid');
+            }
+
+            if (confirmarPassword.length > 0) {
+                if (nuevaPassword !== confirmarPassword) {
+                    confirmarPasswordInput.setCustomValidity('Las contraseñas no coinciden');
+                    confirmarPasswordInput.classList.add('is-invalid');
+                    confirmarPasswordInput.classList.remove('is-valid');
+                } else if (nuevaPassword.length >= 6) {
+                    confirmarPasswordInput.setCustomValidity('');
+                    confirmarPasswordInput.classList.remove('is-invalid');
+                    confirmarPasswordInput.classList.add('is-valid');
+                }
+            } else {
+                confirmarPasswordInput.setCustomValidity('');
+                confirmarPasswordInput.classList.remove('is-invalid', 'is-valid');
+            }
+        }
+
+        nuevaPasswordInput.addEventListener('input', validatePasswords);
+        confirmarPasswordInput.addEventListener('input', validatePasswords);
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (isSubmitting) return;
+
+            validatePasswords();
+            const nuevaPassword = nuevaPasswordInput.value;
+            const confirmarPassword = confirmarPasswordInput.value;
+            if (nuevaPassword.length < 6 || nuevaPassword !== confirmarPassword) return;
+
+            isSubmitting = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+            }
+            if (cancelBtn) cancelBtn.disabled = true;
+            if (loadingDiv) loadingDiv.style.display = 'block';
+            if (modalBody) modalBody.style.display = 'none';
+
+            const formData = new FormData(form);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success === false) {
+                    const msg = data.message || 'Error al resetear credenciales. Intenta nuevamente.';
+                    alert(msg);
+                } else {
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) bsModal.hide();
+                    location.reload();
+                    return;
+                }
+            } catch (err) {
+                const msg = err.name === 'AbortError'
+                    ? 'La operación tardó demasiado. Verifica tu conexión y vuelve a intentar.'
+                    : 'Error de conexión. Intenta nuevamente.';
+                alert(msg);
+            } finally {
+                isSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas a-key me-2"></i>Resetear Credenciales';
+                }
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (loadingDiv) loadingDiv.style.display = 'none';
+                if (modalBody) modalBody.style.display = 'block';
+            }
+        });
+
+        modal.addEventListener('hidden.bs.modal', () => {
+            isSubmitting = false;
+            form.reset();
+            [nuevaPasswordInput, confirmarPasswordInput].forEach(inp => {
+                inp.classList.remove('is-valid', 'is-invalid');
+                inp.setCustomValidity('');
+            });
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-key me-2"></i>Resetear Credenciales';
+            }
+            if (cancelBtn) cancelBtn.disabled = false;
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (modalBody) modalBody.style.display = 'block';
+        });
+    });
+});
+</script>
+{% endblock %}
+
+
+
+
+

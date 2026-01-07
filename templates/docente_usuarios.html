@@ -1,0 +1,164 @@
+{% extends "docente_base.html" %}
+
+{% block title %}Usuarios - Panel Docente{% endblock %}
+
+{% block docente_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Estudiantes Asignados</h1>
+        <p class="text-muted">Listado de estudiantes que el administrador te ha asignado</p>
+    </div>
+    <div class="text-end">
+        <a href="{{ url_for('docente.exportar_reporte') }}" class="btn btn-success">
+            <i class="fas fa-download me-2"></i>Exportar Reporte
+        </a>
+    </div>
+</div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ usuarios|length }}</h4>
+                    <p class="mb-0">Total Estudiantes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ usuarios_con_citas|sum(attribute='citas_atendidas') }}</h4>
+                    <p class="mb-0">Citas Atendidas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ usuarios_con_citas|sum(attribute='citas_pendientes') }}</h4>
+                    <p class="mb-0">Citas Pendientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ usuarios_con_citas|sum(attribute='total_citas') }}</h4>
+                    <p class="mb-0">Total Citas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Users Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Lista de Estudiantes Asignados</h5>
+                </div>
+                <div class="card-body">
+                    {% if usuarios_con_citas %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Email</th>
+                                    <th>Estado</th>
+                                    <th>Total Citas</th>
+                                    <th>Citas Atendidas</th>
+                                    <th>Citas Pendientes</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in usuarios_con_citas %}
+                                {% set usuario = item.usuario %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                                                {{ usuario.nombre_completo[0] if usuario.nombre_completo else usuario.username[0] }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ usuario.nombre_completo or usuario.username }}</div>
+                                                <small class="text-muted">{{ usuario.cedula or 'Sin cédula' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ usuario.email or 'Sin email' }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if usuario.activo else 'danger' }}">
+                                            {{ 'Activo' if usuario.activo else 'Inactivo' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ item.total_citas }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">{{ item.citas_atendidas }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">{{ item.citas_pendientes }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('docente.usuario_detalle', usuario_id=usuario.id) }}" class="btn btn-sm btn-outline-primary" title="Ver Detalles">
+                                                <i class="fas fa-eye"></i> Ver Detalles
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users-slash text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No tiene estudiantes asignados</h4>
+                        <p class="text-muted">El administrador aún no te ha asignado estudiantes. Contacta al administrador para que te asigne estudiantes a los cuales puedas dar seguimiento.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('docente.citas') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-calendar-alt me-2"></i>Ver Citas
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('docente.reportes') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Ver Reportes
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('docente.exportar_reporte') }}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-download me-2"></i>Exportar CSV
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-home me-2"></i>Volver al Panel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

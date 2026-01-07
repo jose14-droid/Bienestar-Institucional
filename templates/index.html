@@ -1,0 +1,1004 @@
+{% extends "base.html" %}
+{% from "partials/admin_toolbar.html" import section_toolbar %}
+{% from "partials/section_blocks.html" import render_section_blocks %}
+{% from "partials/admin_toolbar.html" import section_toolbar %}
+
+{% block title %}Inicio - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="sidebar-content">
+                <h5 class="sidebar-title">Secciones</h5>
+                <hr class="sidebar-divider">
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if request.endpoint == 'index' %}active{% endif %}">
+                        <a href="{{ url_for('public.index') }}" class="sidebar-link {% if request.endpoint == 'index' or request.endpoint == 'public.index' %}active{% endif %}">
+                            <i class="fas fa-home me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'programas' %}active{% endif %}">
+                        <a href="{{ url_for('public.programas') }}" class="sidebar-link {% if request.endpoint == 'programas' %}active{% endif %}">
+                            <i class="fas fa-book me-2"></i>Programas
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                        <a href="{{ url_for('public.proyectos') }}" class="sidebar-link {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                            <i class="fas fa-project-diagram me-2"></i>Proyectos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'servicios' %}active{% endif %}">
+                        <a href="{{ url_for('public.servicios') }}" class="sidebar-link {% if request.endpoint == 'servicios' %}active{% endif %}">
+                            <i class="fas fa-concierge-bell me-2"></i>Servicios
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'eventos' %}active{% endif %}">
+                        <a href="{{ url_for('public.eventos') }}" class="sidebar-link {% if request.endpoint == 'eventos' %}active{% endif %}">
+                            <i class="fas fa-calendar-alt me-2"></i>Eventos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                        <a href="{{ url_for('public.ofertas_laborales') }}" class="sidebar-link {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                            <i class="fas fa-briefcase me-2"></i>Ofertas Laborales
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'noticias' %}active{% endif %}">
+                        <a href="{{ url_for('public.noticias') }}" class="sidebar-link {% if request.endpoint == 'noticias' %}active{% endif %}">
+                            <i class="fas fa-newspaper me-2"></i>Noticias
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Menú de Usuario -->
+                <div class="user-menu-section">
+                    <hr class="sidebar-divider">
+                    <h6 class="user-menu-title">Mi Panel</h6>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link" onclick="showContent('dashboard')">
+                                <i class="fas fa-tachometer-alt me-2"></i>Mi Panel
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link" onclick="showContent('citas')">
+                                <i class="fas fa-calendar-check me-2"></i>Mis Citas
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link" onclick="showContent('agendar')">
+                                <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link" onclick="showContent('horarios')">
+                                <i class="fas fa-clock me-2"></i>Horarios
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 main-content">
+            <div class="content-wrapper">
+                <div class="content-header">
+                    <div class="header-line"></div>
+                </div>
+                
+                <div class="content-body">
+                    {{ section_toolbar(seccion_info, 'informacion_general') }}
+                    {% if seccion_info %}
+                        <h1 class="main-title">{{ seccion_info.titulo }}</h1>
+                        <div class="title-underline"></div>
+                        <div class="intro-text">
+                            {{ seccion_info.contenido|safe }}
+                        </div>
+                        {% set bloques_info = seccion_info.get_estructura() %}
+                        {% if bloques_info %}
+                            <div class="mt-4">
+                                {{ render_section_blocks(bloques_info, 'primary') }}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <h1 class="main-title">COORDINACIÓN DE BIENESTAR INSTITUCIONAL</h1>
+                        <div class="title-underline"></div>
+                        <p class="intro-text">
+                            Bienvenidos al sistema de gestión de bienestar estudiantil del Instituto Superior Tecnológico TENA. 
+                            Aquí encontrarás todos los servicios y programas disponibles para tu desarrollo integral.
+                        </p>
+                    {% endif %}
+                    
+<!-- Hero Section -->
+                    <div class="hero-section">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                                <div class="hero-content">
+                                    <h2 class="hero-title">¡Bienvenido!</h2>
+                                    <p class="hero-description">
+                                        Accede a todos los servicios de bienestar estudiantil desde un solo lugar. 
+                                        Programa citas, participa en eventos y mantente informado sobre las últimas noticias.
+                                    </p>
+                                    <div class="hero-buttons">
+                    {% if not session.user_id %}
+   
+                    {% endif %}
+                                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                                <div class="hero-image text-center">
+                                    <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Perfil" class="img-fluid hero-img">
+                                    <div class="hero-info">
+                                        <h4 class="hero-name">GARCIA PILATAXI ANDREA CRISTINA</h4>
+                                        <p class="hero-position">GESTORA DE BIENESTAR INSTITUCIONAL</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Services Section -->
+                    <div class="services-section">
+                        <div class="services-header">
+                            <div class="services-indicator"></div>
+                            <h2 class="services-title">Nuestros Servicios</h2>
+                        </div>
+                        
+                        <div class="services-grid">
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <h3 class="service-title">Gestión de Citas</h3>
+                                <p class="service-description">Programa y gestiona tus citas con especialistas</p>
+                            </div>
+                            
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <h3 class="service-title">Eventos y Actividades</h3>
+                                <p class="service-description">Participa en eventos y actividades institucionales</p>
+                            </div>
+                            
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <h3 class="service-title">Ofertas Laborales</h3>
+                                <p class="service-description">Explora oportunidades de empleo disponibles</p>
+                            </div>
+                            
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="fas fa-newspaper"></i>
+                                </div>
+                                <h3 class="service-title">Noticias</h3>
+                                <p class="service-description">Mantente informado sobre las últimas novedades</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<style>
+.container-fluid {
+    padding: 0;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 0;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-content {
+    padding: 2rem 1.5rem;
+}
+
+.sidebar-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.sidebar-divider {
+    border-color: rgba(255, 255, 255, 0.3);
+    margin: 1rem 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-link.active {
+    background-color: #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.sidebar-link.active::before {
+    content: "•";
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.user-menu-section {
+    margin-top: 2rem;
+}
+
+.user-menu-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-menu-section .sidebar-link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+
+.user-menu-section .sidebar-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.content-wrapper {
+    background-color: white;
+    min-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.content-header {
+    height: 5px;
+    background: linear-gradient(90deg, #28a745, #ffd700);
+}
+
+.content-body {
+    padding: 3rem;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.title-underline {
+    width: 100px;
+    height: 3px;
+    background-color: #28a745;
+    margin-bottom: 2rem;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+
+.hero-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    margin-bottom: 2rem;
+}
+
+/* Ocultar cualquier navegación horizontal de tabs debajo del hero */
+.hero-section + .nav,
+.hero-section + .nav-tabs,
+.hero-section ~ .nav,
+.hero-section ~ .nav-tabs,
+.content-body > .nav:first-of-type,
+.content-body > .nav-tabs:first-of-type {
+    display: none !important;
+}
+
+.hero-img {
+    max-width: 200px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+.hero-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.hero-position {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.services-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    border-radius: 15px;
+    background-color: #f8f9fa;
+    border-left: 5px solid #ffd700;
+}
+
+.services-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.services-indicator {
+    width: 5px;
+    height: 40px;
+    background-color: #ffd700;
+    margin-right: 1rem;
+    border-radius: 3px;
+}
+
+.services-title {
+    color: #007bff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.service-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+}
+
+.service-card:nth-child(1) .service-icon {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.service-card:nth-child(2) .service-icon {
+    background-color: #e8f5e8;
+    color: #388e3c;
+}
+
+.service-card:nth-child(3) .service-icon {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.service-card:nth-child(4) .service-icon {
+    background-color: #e1f5fe;
+    color: #0288d1;
+}
+
+.service-title {
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.service-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+        border-radius: 0;
+    }
+    
+    .content-wrapper {
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .content-body {
+        padding: 2rem 1rem;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .service-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<script>
+// Función para mostrar notificación toast
+function showNotification(message, type = 'info') {
+    // Crear contenedor de toast si no existe
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        toastContainer.style.zIndex = '1055';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Crear toast
+    const toastId = 'toast-' + Date.now();
+    const toast = document.createElement('div');
+    toast.id = toastId;
+    toast.className = 'toast';
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    const bgColor = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : type === 'danger' ? 'bg-danger' : 'bg-info';
+    const icon = type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : type === 'danger' ? 'fa-times-circle' : 'fa-info-circle';
+    
+    toast.innerHTML = `
+        <div class="toast-header ${bgColor} text-white">
+            <i class="fas ${icon} me-2"></i>
+            <strong class="me-auto">Notificación</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            ${message}
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remover el toast del DOM después de que se oculte
+    toast.addEventListener('hidden.bs.toast', function() {
+        toast.remove();
+    });
+}
+
+// Función para mostrar contenido dinámico
+function showContent(section) {
+    // Verificar si el usuario está autenticado
+    if (!isUserAuthenticated()) {
+        // Mostrar modal elegante con mensaje personalizado según la sección
+        showLoginRequiredModal(section);
+        return;
+    }
+    
+    // Mostrar notificación según la sección
+    const notifications = {
+        'dashboard': 'Has accedido a tu panel de usuario',
+        'citas': 'Has accedido a tus citas',
+        'agendar': 'Has accedido a agendar una cita',
+        'horarios': 'Has accedido a los horarios disponibles'
+    };
+    
+    if (notifications[section]) {
+        showNotification(notifications[section], 'info');
+    }
+    
+    const contentBody = document.querySelector('.content-body');
+    
+    // Remover clase activa de todos los enlaces del menú de usuario
+    document.querySelectorAll('.user-menu-section .sidebar-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Agregar clase activa al enlace seleccionado
+    event.target.closest('.sidebar-link').classList.add('active');
+    
+    // Contenido dinámico basado en la sección seleccionada
+    let content = '';
+    
+    switch(section) {
+        case 'dashboard':
+            content = `
+                <h1 class="main-title">MI PANEL DE USUARIO</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Bienvenido a tu panel personal. Desde aquí puedes gestionar todas tus actividades y acceder a los servicios disponibles.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Resumen de Actividades</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <h3 class="service-title">Próximas Citas</h3>
+                            <p class="service-description">No tienes citas programadas para esta semana.</p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="service-title">Eventos Disponibles</h3>
+                            <p class="service-description">Hay 3 eventos disponibles para participar.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'citas':
+            content = `
+                <h1 class="main-title">MIS CITAS</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Gestiona todas tus citas programadas y revisa el historial de consultas.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Citas Programadas</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <h3 class="service-title">Próxima Cita</h3>
+                            <p class="service-description">
+                                <strong>Fecha:</strong> 15 de Diciembre, 2024<br>
+                                <strong>Hora:</strong> 10:00 AM<br>
+                                <strong>Especialista:</strong> Dr. Juan Pérez<br>
+                                <strong>Tipo:</strong> Consulta Psicológica
+                            </p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="service-title">Historial</h3>
+                            <p class="service-description">No hay citas anteriores registradas.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'agendar':
+            content = `
+                <h1 class="main-title">AGENDAR CITA</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Programa una nueva cita con nuestros especialistas en bienestar estudiantil.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Formulario de Cita</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card" style="grid-column: 1 / -1;">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tipo de Consulta</label>
+                                            <select class="form-control">
+                                                <option>Consulta Psicológica</option>
+                                                <option>Orientación Vocacional</option>
+                                                <option>Apoyo Académico</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Fecha Preferida</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Motivo de la Consulta</label>
+                                    <textarea class="form-control" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Agendar Cita</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'horarios':
+            content = `
+                <h1 class="main-title">HORARIOS DISPONIBLES</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Consulta los horarios de atención de nuestros especialistas y servicios.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Horarios de Atención</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3 class="service-title">Servicios Generales</h3>
+                            <p class="service-description">
+                                <strong>Lunes a Viernes:</strong> 8:00 AM - 5:00 PM<br>
+                                <strong>Sábados:</strong> 8:00 AM - 12:00 PM<br>
+                                <strong>Domingos:</strong> Cerrado
+                            </p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <h3 class="service-title">Consultas Psicológicas</h3>
+                            <p class="service-description">
+                                <strong>Lunes a Viernes:</strong> 9:00 AM - 6:00 PM<br>
+                                <strong>Horario de Emergencias:</strong> 24/7
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'eventos':
+            content = `
+                <h1 class="main-title">EVENTOS Y ACTIVIDADES</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Participa en eventos y actividades organizadas por la Coordinación de Bienestar Institucional.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Próximos Eventos</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="service-title">Taller de Manejo del Estrés</h3>
+                            <p class="service-description">
+                                <strong>Fecha:</strong> 20 de Diciembre, 2024<br>
+                                <strong>Hora:</strong> 2:00 PM - 4:00 PM<br>
+                                <strong>Lugar:</strong> Auditorio Principal<br>
+                                <strong>Instructor:</strong> Dra. María González
+                            </p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h3 class="service-title">Feria de Empleo</h3>
+                            <p class="service-description">
+                                <strong>Fecha:</strong> 22 de Diciembre, 2024<br>
+                                <strong>Hora:</strong> 9:00 AM - 5:00 PM<br>
+                                <strong>Lugar:</strong> Patio Central<br>
+                                <strong>Empresas Participantes:</strong> 15+ empresas
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'ofertas':
+            content = `
+                <h1 class="main-title">OFERTAS LABORALES</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Explora las oportunidades de empleo y prácticas profesionales disponibles.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Oportunidades Disponibles</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="service-title">Desarrollador Web - Empresa ABC</h3>
+                            <p class="service-description">
+                                <strong>Salario:</strong> $800 - $1200<br>
+                                <strong>Tipo:</strong> Tiempo Completo<br>
+                                <strong>Ubicación:</strong> Quito<br>
+                                <strong>Requisitos:</strong> Conocimientos en React, Node.js
+                            </p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="service-title">Práctica en Marketing Digital - Empresa XYZ</h3>
+                            <p class="service-description">
+                                <strong>Duración:</strong> 6 meses<br>
+                                <strong>Tipo:</strong> Práctica<br>
+                                <strong>Ubicación:</strong> Tena<br>
+                                <strong>Requisitos:</strong> Estudiante de último año
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        case 'noticias':
+            content = `
+                <h1 class="main-title">NOTICIAS Y COMUNICADOS</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Mantente informado sobre las últimas noticias y comunicados de la institución.
+                </p>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Últimas Noticias</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="service-title">Nuevo Programa de Becas 2025</h3>
+                            <p class="service-description">Se abre la convocatoria para el nuevo programa de becas académicas para el año 2025. Los estudiantes interesados pueden postularse hasta el 31 de enero.</p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-first-aid"></i>
+                            </div>
+                            <h3 class="service-title">Capacitación en Primeros Auxilios</h3>
+                            <p class="service-description">El próximo mes se realizará una capacitación gratuita en primeros auxilios para toda la comunidad estudiantil. Las inscripciones están abiertas.</p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-times"></i>
+                            </div>
+                            <h3 class="service-title">Horarios de Vacaciones</h3>
+                            <p class="service-description">Durante el período vacacional, los servicios de bienestar estarán disponibles con horarios reducidos. Consulta los nuevos horarios en nuestra página web.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            break;
+            
+        default:
+            content = `
+                <h1 class="main-title">COORDINACIÓN DE BIENESTAR INSTITUCIONAL</h1>
+                <div class="title-underline"></div>
+                
+                <p class="intro-text">
+                    Bienvenidos al sistema de gestión de bienestar estudiantil del Instituto Superior Tecnológico TENA. 
+                    Aquí encontrarás todos los servicios y programas disponibles para tu desarrollo integral.
+                </p>
+                
+                <div class="hero-section">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="hero-content">
+                                <h2 class="hero-title">¡Bienvenido!</h2>
+                                <p class="hero-description">
+                                    Accede a todos los servicios de bienestar estudiantil desde un solo lugar. 
+                                    Programa citas, participa en eventos y mantente informado sobre las últimas noticias.
+                                </p>
+                                <div class="hero-buttons">
+                                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-3">Iniciar Sesión</a>
+                                    <a href="{{ url_for('auth.registro') }}" class="btn btn-outline-primary btn-lg">Registrarse</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="hero-image text-center">
+                                <img src="{{ url_for('static', filename='images/perfil.png') }}" alt="Perfil" class="img-fluid hero-img">
+                                <div class="hero-info">
+                                    <h4 class="hero-name">GARCIA PILATAXI ANDREA CRISTINA</h4>
+                                    <p class="hero-position">GESTORA DE BIENESTAR INSTITUCIONAL</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-indicator"></div>
+                        <h2 class="services-title">Nuestros Servicios</h2>
+                    </div>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="service-title">Gestión de Citas</h3>
+                            <p class="service-description">Programa y gestiona tus citas con especialistas</p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <h3 class="service-title">Eventos y Actividades</h3>
+                            <p class="service-description">Participa en eventos y actividades institucionales</p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h3 class="service-title">Ofertas Laborales</h3>
+                            <p class="service-description">Explora oportunidades de empleo disponibles</p>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <h3 class="service-title">Noticias</h3>
+                            <p class="service-description">Mantente informado sobre las últimas novedades</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+    }
+    
+    contentBody.innerHTML = content;
+}
+
+// Función para verificar si el usuario está autenticado
+function isUserAuthenticated() {
+    // Verificar si existe el dropdown de usuario en el navbar
+    const userDropdown = document.querySelector('#navbarDropdown');
+    
+    // Si existe el dropdown de usuario, significa que está logueado
+    if (userDropdown) {
+        return true;
+    }
+    
+    // Verificar si hay información de sesión en el localStorage
+    const sessionData = localStorage.getItem('user_session');
+    if (sessionData) {
+        try {
+            const session = JSON.parse(sessionData);
+            return session.authenticated === true;
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    // Verificar si hay cookies de sesión (en caso de que se usen)
+    const sessionCookie = document.cookie.split(';').find(cookie => 
+        cookie.trim().startsWith('session=')
+    );
+    
+    if (sessionCookie) {
+        return true;
+    }
+    
+    return false;
+}
+
+// Inicializar con contenido por defecto
+document.addEventListener('DOMContentLoaded', function() {
+    // El contenido por defecto ya está cargado
+});
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Nueva Noticia - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-newspaper me-2"></i>Crear Nueva Noticia</h4>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título de la Noticia <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required maxlength="200" placeholder="Ingrese el título de la noticia">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="contenido" class="form-label">Contenido <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="contenido" name="contenido" rows="10" required placeholder="Escriba el contenido completo de la noticia"></textarea>
+                        <small class="form-text text-muted">Escriba el contenido completo de la noticia que será visible para los usuarios.</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="autor" class="form-label">Autor <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="autor" name="autor" required maxlength="100" placeholder="Nombre del autor">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <select class="form-select" id="categoria" name="categoria">
+                                <option value="general" selected>General</option>
+                                <option value="importante">Importante</option>
+                                <option value="anuncio">Anuncio</option>
+                                <option value="evento">Evento</option>
+                                <option value="servicio">Servicio</option>
+                                <option value="programa">Programa</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="activa" name="activa" checked>
+                            <label class="form-check-label" for="activa">
+                                Publicar inmediatamente (noticia activa)
+                            </label>
+                            <small class="form-text text-muted d-block">Si está desmarcado, la noticia se creará pero no será visible para los usuarios hasta que se active.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('admin.noticias') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Crear Noticia
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Contador de caracteres para el título
+    const tituloInput = document.getElementById('titulo');
+    const contenidoTextarea = document.getElementById('contenido');
+    
+    // Validación en tiempo real
+    tituloInput.addEventListener('input', function() {
+        if (this.value.length > 200) {
+            this.value = this.value.substring(0, 200);
+        }
+    });
+    
+    contenidoTextarea.addEventListener('input', function() {
+        // Puedes agregar validaciones adicionales aquí si es necesario
+    });
+});
+</script>
+{% endblock %}
+

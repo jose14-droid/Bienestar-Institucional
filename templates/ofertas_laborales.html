@@ -1,0 +1,696 @@
+{% extends "base.html" %}
+{% from "partials/admin_toolbar.html" import resource_toolbar %}
+
+{% block title %}Ofertas Laborales - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row g-0">
+        {% if session.user_id %}
+        <!-- Sidebar para usuarios logueados -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="sidebar-content">
+                <!-- Información del Usuario -->
+                <div class="user-info-section mb-3">
+                    <div class="text-white mb-2">
+                        <small class="d-block fw-bold">Bienvenido, {{ session.username }}</small>
+                        <span class="badge bg-primary mt-1">Rol: {{ session.rol.title() }}</span>
+                    </div>
+                </div>
+                <hr class="sidebar-divider">
+                
+                <!-- Secciones -->
+                <h5 class="sidebar-title">Secciones</h5>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if request.endpoint == 'index' %}active{% endif %}">
+                        <a href="{{ url_for('public.index') }}" class="sidebar-link {% if request.endpoint == 'index' %}active{% endif %}">
+                            <i class="fas fa-home me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'programas' %}active{% endif %}">
+                        <a href="{{ url_for('public.programas') }}" class="sidebar-link {% if request.endpoint == 'programas' %}active{% endif %}">
+                            <i class="fas fa-book me-2"></i>Programas
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'servicios' %}active{% endif %}">
+                        <a href="{{ url_for('public.servicios') }}" class="sidebar-link {% if request.endpoint == 'servicios' %}active{% endif %}">
+                            <i class="fas fa-concierge-bell me-2"></i>Servicios
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                        <a href="{{ url_for('public.proyectos') }}" class="sidebar-link {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                            <i class="fas fa-project-diagram me-2"></i>Proyectos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'eventos' %}active{% endif %}">
+                        <a href="{{ url_for('public.eventos') }}" class="sidebar-link {% if request.endpoint == 'eventos' %}active{% endif %}">
+                            <i class="fas fa-calendar-alt me-2"></i>Eventos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                        <a href="{{ url_for('public.ofertas_laborales') }}" class="sidebar-link {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                            <i class="fas fa-briefcase me-2"></i>Ofertas Laborales
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'noticias' %}active{% endif %}">
+                        <a href="{{ url_for('public.noticias') }}" class="sidebar-link {% if request.endpoint == 'noticias' %}active{% endif %}">
+                            <i class="fas fa-newspaper me-2"></i>Noticias
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Mi Panel - Siempre visible para usuarios logueados -->
+                <hr class="sidebar-divider">
+                <div class="user-menu-section" style="display: block !important; visibility: visible !important; opacity: 1 !important;">
+                    <h6 class="user-menu-title" style="display: block !important; visibility: visible !important;">MI PANEL</h6>
+                    <ul class="sidebar-menu" style="display: block !important; visibility: visible !important; list-style: none !important; padding: 0 !important; margin: 0 !important;">
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('user.dashboard') }}" class="sidebar-link {% if request.endpoint == 'dashboard' or request.endpoint == 'user.dashboard' %}active{% endif %}" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-tachometer-alt me-2"></i>Mi Panel
+                            </a>
+                        </li>
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('cita.citas') }}" class="sidebar-link {% if request.endpoint == 'citas' and session.rol == 'usuario' %}active{% endif %}" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-calendar-check me-2"></i>Mis Citas
+                            </a>
+                        </li>
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('cita.agendar_cita') }}" class="sidebar-link {% if request.endpoint == 'agendar_cita' %}active{% endif %}" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                            </a>
+                        </li>
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('cita.horarios_disponibles') }}" class="sidebar-link {% if request.endpoint == 'horarios_disponibles' %}active{% endif %}" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-clock me-2"></i>Horarios
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Cerrar Sesión -->
+                <div class="mt-4">
+                    <hr class="sidebar-divider">
+                    <a href="{{ url_for('auth.logout') }}" class="sidebar-link text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Sidebar para usuarios no logueados -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="sidebar-content">
+                <h5 class="sidebar-title">Secciones</h5>
+                <hr class="sidebar-divider">
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if request.endpoint == 'index' %}active{% endif %}">
+                        <a href="{{ url_for('public.index') }}" class="sidebar-link {% if request.endpoint == 'index' %}active{% endif %}">
+                            <i class="fas fa-home me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'programas' %}active{% endif %}">
+                        <a href="{{ url_for('public.programas') }}" class="sidebar-link {% if request.endpoint == 'programas' %}active{% endif %}">
+                            <i class="fas fa-book me-2"></i>Programas
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'servicios' %}active{% endif %}">
+                        <a href="{{ url_for('public.servicios') }}" class="sidebar-link {% if request.endpoint == 'servicios' %}active{% endif %}">
+                            <i class="fas fa-concierge-bell me-2"></i>Servicios
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                        <a href="{{ url_for('public.proyectos') }}" class="sidebar-link {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                            <i class="fas fa-project-diagram me-2"></i>Proyectos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'eventos' %}active{% endif %}">
+                        <a href="{{ url_for('public.eventos') }}" class="sidebar-link {% if request.endpoint == 'eventos' %}active{% endif %}">
+                            <i class="fas fa-calendar-alt me-2"></i>Eventos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                        <a href="{{ url_for('public.ofertas_laborales') }}" class="sidebar-link {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                            <i class="fas fa-briefcase me-2"></i>Ofertas Laborales
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'noticias' %}active{% endif %}">
+                        <a href="{{ url_for('public.noticias') }}" class="sidebar-link {% if request.endpoint == 'noticias' %}active{% endif %}">
+                            <i class="fas fa-newspaper me-2"></i>Noticias
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- MI PANEL - Visible también para usuarios no logueados -->
+                <hr class="sidebar-divider">
+                <div class="user-menu-section" style="display: block !important; visibility: visible !important; opacity: 1 !important;">
+                    <h6 class="user-menu-title" style="display: block !important; visibility: visible !important;">MI PANEL</h6>
+                    <ul class="sidebar-menu" style="display: block !important; visibility: visible !important; list-style: none !important; padding: 0 !important; margin: 0 !important;">
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('auth.login') }}" class="sidebar-link mi-panel-link" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-tachometer-alt me-2"></i>Mi Panel
+                            </a>
+                        </li>
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('auth.login') }}" class="sidebar-link mi-panel-link" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-calendar-check me-2"></i>Mis Citas
+                            </a>
+                        </li>
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('auth.login') }}" class="sidebar-link mi-panel-link" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                            </a>
+                        </li>
+                        <li class="sidebar-item" style="display: block !important; visibility: visible !important;">
+                            <a href="{{ url_for('auth.login') }}" class="sidebar-link mi-panel-link" style="display: flex !important; visibility: visible !important;">
+                                <i class="fas fa-clock me-2"></i>Horarios
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 main-content">
+            <div class="content-wrapper">
+                {% if not session.user_id %}
+                <div class="content-header">
+                    <div class="header-line"></div>
+                </div>
+                {% endif %}
+                
+                <div class="content-body p-4">
+                    {{ resource_toolbar('Ofertas laborales', 'admin_ofertas', 'admin_nueva_oferta') }}
+                    <h1 class="main-title">OFERTAS LABORALES</h1>
+                    <div class="title-underline"></div>
+                    
+                    <p class="intro-text">
+                        Encuentra las mejores oportunidades laborales disponibles en la región.
+                    </p>
+                    
+                    {% if ofertas %}
+                        <div class="row">
+                            {% for oferta in ofertas %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary">{{ oferta.empresa }}</span>
+                                        {% if oferta.fecha_vencimiento %}
+                                            <small class="text-muted">
+                                                Vence: {{ oferta.fecha_vencimiento.strftime('%d/%m/%Y') }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ oferta.titulo }}</h5>
+                                        <p class="card-text">{{ oferta.descripcion }}</p>
+                                        
+                                        <div class="mb-2">
+                                            <i class="fas fa-building text-primary me-2"></i>
+                                            <strong>Empresa:</strong> {{ oferta.empresa }}
+                                        </div>
+                                        <div class="mb-2">
+                                            <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                                            <strong>Ubicación:</strong> {{ oferta.ubicacion }}
+                                        </div>
+                                        {% if oferta.salario %}
+                                        <div class="mb-2">
+                                            <i class="fas fa-dollar-sign text-success me-2"></i>
+                                            <strong>Salario:</strong> {{ oferta.salario }}
+                                        </div>
+                                        {% endif %}
+                                        {% if oferta.tipo_contrato %}
+                                        <div class="mb-2">
+                                            <i class="fas fa-clock text-info me-2"></i>
+                                            <strong>Tipo:</strong> {{ oferta.tipo_contrato.replace('_', ' ').title() }}
+                                        </div>
+                                        {% endif %}
+                                        {% if oferta.requisitos %}
+                                        <div class="mb-2">
+                                            <i class="fas fa-list text-secondary me-2"></i>
+                                            <strong>Requisitos:</strong>
+                                            <p class="small text-muted mt-1">{{ oferta.requisitos[:100] }}{% if oferta.requisitos|length > 100 %}...{% endif %}</p>
+                                        </div>
+                                        {% endif %}
+                                        {% if oferta.beneficios %}
+                                        <div class="mb-2">
+                                            <i class="fas fa-gift text-success me-2"></i>
+                                            <strong>Beneficios:</strong>
+                                            <p class="small text-muted mt-1">{{ oferta.beneficios[:100] }}{% if oferta.beneficios|length > 100 %}...{% endif %}</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                Publicado: {{ oferta.fecha_publicacion.strftime('%d/%m/%Y') }}
+                                            </small>
+                                            {% if oferta.contacto %}
+                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#contactoModal{{ oferta.id }}">
+                                                <i class="fas fa-envelope me-1"></i>Contactar
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal de Contacto -->
+                            {% if oferta.contacto %}
+                            <div class="modal fade" id="contactoModal{{ oferta.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Información de Contacto</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h6>{{ oferta.titulo }}</h6>
+                                            <p class="text-muted">{{ oferta.empresa }}</p>
+                                            <div class="mb-3">
+                                                <strong>Contacto:</strong><br>
+                                                <i class="fas fa-envelope me-2"></i>{{ oferta.contacto }}
+                                            </div>
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                <strong>Nota:</strong> Contacta directamente con la empresa para obtener más información sobre esta oferta laboral.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <div class="card text-center shadow-sm">
+                                    <div class="card-body py-5">
+                                        <i class="fas fa-briefcase text-muted mb-3" style="font-size: 4rem;"></i>
+                                        <h4 class="text-muted">No hay ofertas laborales disponibles</h4>
+                                        <p class="text-muted">Pronto se publicarán nuevas oportunidades de empleo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+{% if session.user_id %}
+/* Estilos para usuarios logueados - usar estilos de user_base */
+.container-fluid {
+    padding: 0;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 0;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-content {
+    padding: 2rem 1.5rem;
+}
+
+.user-info-section {
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.sidebar-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-divider {
+    border-color: rgba(255, 255, 255, 0.3);
+    margin: 0.5rem 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-link.active {
+    background-color: #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.sidebar-link.active::before {
+    content: "•";
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.user-menu-section {
+    margin-top: 0.5rem;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.user-menu-title {
+    color: #0d6efd;
+    font-weight: bold;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0 0.5rem;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+}
+
+.user-menu-section .sidebar-link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+}
+
+.user-menu-section .sidebar-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.user-menu-section .sidebar-menu {
+    display: block !important;
+    visibility: visible !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    height: auto !important;
+}
+
+.user-menu-section .sidebar-item {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    margin-bottom: 0.4rem !important;
+}
+
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.content-wrapper {
+    background-color: white;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.content-body {
+    padding: 2rem;
+}
+{% else %}
+/* Estilos para usuarios no logueados */
+.container-fluid {
+    padding: 0;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 0;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-content {
+    padding: 2rem 1.5rem;
+}
+
+.sidebar-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-divider {
+    border-color: rgba(255, 255, 255, 0.3);
+    margin: 1rem 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-link.active {
+    background-color: #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.sidebar-link.active::before {
+    content: "•";
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.content-wrapper {
+    background-color: white;
+    min-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.content-header {
+    height: 5px;
+    background: linear-gradient(90deg, #28a745, #ffd700);
+}
+
+.content-body {
+    padding: 3rem;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.title-underline {
+    width: 100px;
+    height: 3px;
+    background-color: #28a745;
+    margin-bottom: 2rem;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+        border-radius: 0;
+    }
+    
+    .content-wrapper {
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .content-body {
+        padding: 2rem 1rem;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+}
+{% endif %}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.title-underline {
+    width: 100px;
+    height: 3px;
+    background-color: #28a745;
+    margin-bottom: 2rem;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+</style>
+
+<!-- Modal de Acceso Requerido -->
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+            <div class="modal-body p-4">
+                <h5 class="modal-title mb-3" id="loginRequiredModalLabel" style="color: #007bff; font-weight: 600; font-size: 1.5rem;">
+                    Acceso Requerido
+                </h5>
+                <p class="text-muted mb-3" style="font-size: 0.95rem;">Inicia sesión para continuar</p>
+                <div class="d-flex align-items-start mb-4">
+                    <div style="width: 3px; background-color: #007bff; margin-right: 12px; border-radius: 2px;"></div>
+                    <p class="mb-0" style="color: #666; line-height: 1.6;">
+                        Para explorar todas las publicaciones, necesitas iniciar sesión con tu cuenta.
+                    </p>
+                </div>
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.5rem 1.5rem;">
+                        Cancelar
+                    </button>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary" style="border-radius: 8px; padding: 0.5rem 1.5rem; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                        <i class="fas fa-arrow-right"></i>
+                        <div style="width: 1px; height: 20px; background-color: rgba(255,255,255,0.3);"></div>
+                        <span>Iniciar Sesión</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Asegurar que el script se ejecute después de que Bootstrap esté cargado
+(function() {
+    function initMiPanelLinks() {
+        // Detectar clics en enlaces de MI PANEL cuando el usuario no está logueado
+        const miPanelLinks = document.querySelectorAll('.mi-panel-link');
+        const isLoggedIn = {{ 'true' if session.user_id else 'false' }};
+        
+        if (miPanelLinks.length > 0 && typeof bootstrap !== 'undefined') {
+            miPanelLinks.forEach(function(link) {
+                // Remover listeners anteriores si existen
+                link.removeEventListener('click', handleMiPanelClick);
+                // Agregar nuevo listener
+                link.addEventListener('click', handleMiPanelClick);
+            });
+        }
+    }
+    
+    function handleMiPanelClick(e) {
+        const isLoggedIn = {{ 'true' if session.user_id else 'false' }};
+        
+        if (!isLoggedIn) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Verificar que el modal existe
+            const modalElement = document.getElementById('loginRequiredModal');
+            if (modalElement && typeof bootstrap !== 'undefined') {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            } else {
+                // Fallback: redirigir al login si el modal no está disponible
+                window.location.href = "{{ url_for('auth.login') }}";
+            }
+        }
+    }
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMiPanelLinks);
+    } else {
+        initMiPanelLinks();
+    }
+    
+    // También ejecutar después de que Bootstrap esté cargado
+    window.addEventListener('load', initMiPanelLinks);
+})();
+</script>
+{% endblock %}

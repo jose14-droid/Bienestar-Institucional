@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio de Cita</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .appointment-details {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b35;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .reminder-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #ff6b35;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⏰ Recordatorio de Cita</h1>
+        <p>Coordinación de Bienestar Institucional</p>
+    </div>
+    
+    <div class="content">
+        <h2>¡Hola {{ usuario.nombre_completo }}!</h2>
+        <p>Te recordamos que tienes una cita programada:</p>
+        
+        <div class="appointment-details">
+            <h3>Detalles de la Cita</h3>
+            <div class="detail-row">
+                <span class="detail-label">Motivo:</span>
+                <span>{{ cita.motivo }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Fecha:</span>
+                <span>{{ cita.fecha.strftime('%d/%m/%Y') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Hora:</span>
+                <span>{{ cita.hora.strftime('%H:%M') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Estado:</span>
+                <span style="color: #28a745; font-weight: bold;">{{ cita.estado.title() }}</span>
+            </div>
+        </div>
+        
+        <div class="reminder-box">
+            <h4>📋 Recordatorios Importantes:</h4>
+            <ul>
+                <li>Tu cita es <strong>mañana</strong> - ¡No la olvides!</li>
+                <li>Llega 10 minutos antes de la hora programada</li>
+                <li>Trae tu cédula de identidad</li>
+                <li>Si necesitas cancelar, contacta inmediatamente</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="#" class="btn">Ver Mis Citas</a>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Coordinación de Bienestar Institucional</strong></p>
+            <p>Instituto Superior Tecnológico TENA</p>
+            <p>📧 bienestar@instituto.edu | 📞 (06) 288-1234</p>
+            <p>📍 Tena, Ecuador</p>
+        </div>
+    </div>
+</body>
+</html>

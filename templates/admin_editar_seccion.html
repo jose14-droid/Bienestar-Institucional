@@ -1,0 +1,332 @@
+{% extends "admin_base.html" %}
+
+{% block title %}{% if seccion %}Editar{% else %}Nueva{% endif %} Sección - Panel Admin{% endblock %}
+
+{% block admin_content %}
+{% set builder_sections = ['informacion_general','programas','proyectos','servicios'] %}
+{% set nombre_prefill = nombre_prefill if nombre_prefill is defined else (seccion.nombre if seccion else '') %}
+{% set current_section = seccion.nombre if seccion else nombre_prefill %}
+{% set builder_blocks = builder_blocks if builder_blocks is defined else (seccion.get_estructura() if seccion else []) %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-11 col-lg-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <i class="fas fa-{{ 'edit' if seccion else 'plus' }} me-2"></i>
+                        {% if seccion %}Editar Sección{% else %}Nueva Sección{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="seccion-form">
+                        <input type="hidden" name="estructura_datos" id="estructura_datos_input">
+                        <input type="hidden" name="builder_mode" id="builder_mode_input" value="off">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre de la Sección <span class="text-danger">*</span></label>
+                            {% if seccion %}
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ seccion.nombre }}" disabled>
+                                <div class="form-text">El nombre de la sección no se puede cambiar después de crearla.</div>
+                            {% else %}
+                                <select class="form-select" id="nombre" name="nombre" required>
+                                    <option value="">Seleccione una sección</option>
+                                    <option value="informacion_general" {% if nombre_prefill == 'informacion_general' %}selected{% endif %}>Información General</option>
+                                    <option value="programas" {% if nombre_prefill == 'programas' %}selected{% endif %}>Programas</option>
+                                    <option value="proyectos" {% if nombre_prefill == 'proyectos' %}selected{% endif %}>Proyectos</option>
+                                    <option value="servicios" {% if nombre_prefill == 'servicios' %}selected{% endif %}>Servicios</option>
+                                </select>
+                                <div class="form-text">Seleccione el tipo de sección que desea crear.</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" 
+                                   value="{{ seccion.titulo if seccion else '' }}" 
+                                   placeholder="Ej: Programas de Bienestar Estudiantil" required>
+                        </div>
+
+                        <div class="mb-4" id="builder-wrapper"
+                             data-builder-sections='{{ builder_sections|tojson }}'
+                             data-current-section="{{ current_section if current_section else '' }}"
+                             data-existing-blocks='{{ builder_blocks|tojson }}'
+                             data-is-edit="{{ 'true' if seccion else 'false' }}">
+                            <div class="card border-info">
+                                <div class="card-header bg-light d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center">
+                                    <div>
+                                        <strong>Editor guiado (sin código)</strong>
+                                        <p class="small text-muted mb-0">Agrega bloques con título, subtítulo y descripción.</p>
+                                    </div>
+                                    <div class="form-check form-switch mt-3 mt-lg-0">
+                                        <input class="form-check-input" type="checkbox" id="toggleBuilder">
+                                        <label class="form-check-label" for="toggleBuilder">Usar editor guiado</label>
+                                    </div>
+                                </div>
+                                <div class="card-body" id="builder-card-body" style="display: none;">
+                                    <div id="builder-empty" class="text-center text-muted py-4">
+                                        <i class="fas fa-layer-group mb-2" style="font-size: 2rem;"></i>
+                                        <p class="mb-0">Agrega tu primer bloque para comenzar.</p>
+                                    </div>
+                                    <div id="builder-blocks" class="builder-blocks"></div>
+                                    <div class="d-flex flex-wrap gap-2 mt-3">
+                                        <button type="button" class="btn btn-outline-primary" id="add-block-btn">
+                                            <i class="fas fa-plus me-2"></i>Agregar bloque
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" id="preview-builder-btn">
+                                            <i class="fas fa-eye me-2"></i>Vista previa
+                                        </button>
+                                    </div>
+                                    <div class="mt-4 d-none" id="builder-preview-wrapper">
+                                        <h6 class="text-muted text-uppercase mb-3">Vista previa</h6>
+                                        <div class="builder-preview border rounded p-3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contenido" class="form-label">Contenido <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="contenido" name="contenido" rows="12" required 
+                                      placeholder="Descripción de la sección. Si usas el editor guiado, este campo se rellenará automáticamente.">{{ seccion.contenido if seccion else '' }}</textarea>
+                            <div class="form-text">
+                                Si prefieres usar HTML, escribe aquí el contenido manualmente. El editor guiado lo completará por ti si está activo.
+                            </div>
+                        </div>
+                        
+                        {% if seccion %}
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Fecha de Creación</label>
+                                    <input type="text" class="form-control" 
+                                           value="{{ seccion.fecha_creacion.strftime('%d/%m/%Y %H:%M') if seccion.fecha_creacion else 'N/A' }}" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Última Actualización</label>
+                                    <input type="text" class="form-control" 
+                                           value="{{ seccion.fecha_actualizacion.strftime('%d/%m/%Y %H:%M') if seccion.fecha_actualizacion else 'N/A' }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="alert alert-info d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                Guarda frecuentemente. Puedes alternar entre el editor guiado y el contenido manual siempre que lo necesites.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.secciones') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>{% if seccion %}Actualizar{% else %}Crear{% endif %} Sección
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const builderWrapper = document.getElementById('builder-wrapper');
+    if (!builderWrapper) return;
+    
+    const builderCard = document.getElementById('builder-card-body');
+    const toggleBuilder = document.getElementById('toggleBuilder');
+    const builderBlocksContainer = document.getElementById('builder-blocks');
+    const builderEmpty = document.getElementById('builder-empty');
+    const addBlockBtn = document.getElementById('add-block-btn');
+    const previewBtn = document.getElementById('preview-builder-btn');
+    const previewWrapper = document.getElementById('builder-preview-wrapper');
+    const previewContainer = previewWrapper ? previewWrapper.querySelector('.builder-preview') : null;
+    const contenidoField = document.getElementById('contenido');
+    const estructuraInput = document.getElementById('estructura_datos_input');
+    const builderModeInput = document.getElementById('builder_mode_input');
+    const nombreSelect = document.getElementById('nombre');
+    
+    const builderSections = JSON.parse(builderWrapper.dataset.builderSections || '[]');
+    const existingBlocks = JSON.parse(builderWrapper.dataset.existingBlocks || '[]');
+    const currentSection = builderWrapper.dataset.currentSection || '';
+    const shouldStartEnabled = builderSections.includes(currentSection) && (existingBlocks.length > 0 || builderWrapper.dataset.isEdit === 'false');
+    
+    const state = {
+        enabled: shouldStartEnabled,
+        blocks: existingBlocks
+    };
+    
+    toggleBuilder.checked = state.enabled;
+    builderCard.style.display = state.enabled ? 'block' : 'none';
+    builderModeInput.value = state.enabled ? 'on' : 'off';
+    if (!state.enabled) {
+        builderWrapper.querySelector('.form-check-label').insertAdjacentHTML('beforeend', '<span class="ms-2 badge bg-warning text-dark">Disponible para Programas/Servicios/Proyectos</span>');
+    }
+    
+    const renderBlocks = () => {
+        builderBlocksContainer.innerHTML = '';
+        if (!state.blocks.length) {
+            builderEmpty.classList.remove('d-none');
+        } else {
+            builderEmpty.classList.add('d-none');
+        }
+        
+        state.blocks.forEach((block, index) => {
+            const blockCard = document.createElement('div');
+            blockCard.className = 'builder-block card mb-3';
+            blockCard.innerHTML = `
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Bloque ${index + 1}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-action="remove" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Título *</label>
+                            <input type="text" class="form-control" data-field="titulo" data-index="${index}" value="${block.titulo || ''}" placeholder="Ej: Programa de Becas" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Subtítulo</label>
+                            <input type="text" class="form-control" data-field="subtitulo" data-index="${index}" value="${block.subtitulo || ''}" placeholder="Ej: Atención a estudiantes vulnerables">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Descripción</label>
+                            <textarea class="form-control" rows="3" data-field="descripcion" data-index="${index}" placeholder="Describe brevemente el contenido del bloque.">${block.descripcion || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            builderBlocksContainer.appendChild(blockCard);
+        });
+    };
+    
+    const syncHiddenFields = () => {
+        if (state.enabled && state.blocks.length) {
+            estructuraInput.value = JSON.stringify(state.blocks);
+            builderModeInput.value = 'on';
+            contenidoField.value = buildHtml(state.blocks);
+            contenidoField.readOnly = true;
+            contenidoField.classList.add('bg-light');
+        } else if (state.enabled && !state.blocks.length) {
+            estructuraInput.value = '';
+            builderModeInput.value = 'on';
+            contenidoField.readOnly = true;
+            contenidoField.value = '';
+            contenidoField.classList.add('bg-light');
+        } else {
+            estructuraInput.value = '';
+            builderModeInput.value = 'off';
+            contenidoField.readOnly = false;
+            contenidoField.classList.remove('bg-light');
+        }
+    };
+    
+    const buildHtml = (blocks) => {
+        return blocks.map(block => {
+            const parts = [`<div class="structured-block">`];
+            if (block.titulo) parts.push(`<h2>${block.titulo}</h2>`);
+            if (block.subtitulo) parts.push(`<h3>${block.subtitulo}</h3>`);
+            if (block.descripcion) parts.push(`<p>${block.descripcion}</p>`);
+            parts.push(`</div>`);
+            return parts.join('\n');
+        }).join('\n');
+    };
+    
+    const updatePreview = () => {
+        if (!previewWrapper || !previewContainer) return;
+        if (!state.blocks.length) {
+            previewWrapper.classList.add('d-none');
+            previewContainer.innerHTML = '';
+            return;
+        }
+        previewWrapper.classList.remove('d-none');
+        previewContainer.innerHTML = buildHtml(state.blocks);
+    };
+    
+    addBlockBtn.addEventListener('click', () => {
+        state.blocks.push({
+            titulo: '',
+            subtitulo: '',
+            descripcion: '',
+        });
+        renderBlocks();
+        syncHiddenFields();
+    });
+    
+    builderBlocksContainer.addEventListener('input', (event) => {
+        const target = event.target;
+        const idx = parseInt(target.dataset.index, 10);
+        const field = target.dataset.field;
+        if (Number.isInteger(idx) && field) {
+            state.blocks[idx][field] = target.value;
+            syncHiddenFields();
+        }
+    });
+    
+    builderBlocksContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action="remove"]');
+        if (!button) return;
+        const idx = parseInt(button.dataset.index, 10);
+        if (Number.isInteger(idx)) {
+            state.blocks.splice(idx, 1);
+            renderBlocks();
+            syncHiddenFields();
+            updatePreview();
+        }
+    });
+    
+    previewBtn.addEventListener('click', () => {
+        updatePreview();
+        if (previewWrapper) {
+            previewWrapper.classList.toggle('d-none', !state.blocks.length);
+        }
+    });
+    
+    toggleBuilder.addEventListener('change', () => {
+        state.enabled = toggleBuilder.checked;
+        builderCard.style.display = state.enabled ? 'block' : 'none';
+        syncHiddenFields();
+        updatePreview();
+    });
+    
+    if (nombreSelect && !nombreSelect.disabled) {
+        nombreSelect.addEventListener('change', (event) => {
+            const selected = event.target.value;
+            const isAllowed = builderSections.includes(selected);
+            builderWrapper.dataset.currentSection = selected;
+            state.enabled = isAllowed;
+            toggleBuilder.checked = isAllowed;
+            builderCard.style.display = isAllowed ? 'block' : 'none';
+            builderModeInput.value = isAllowed ? 'on' : 'off';
+            if (!isAllowed) {
+                state.blocks = [];
+                builderBlocksContainer.innerHTML = '';
+                builderEmpty.classList.remove('d-none');
+                previewWrapper?.classList.add('d-none');
+            }
+            syncHiddenFields();
+        });
+    }
+    
+    // Inicializar
+    if (state.enabled && !state.blocks.length) {
+        state.blocks.push({
+            titulo: '',
+            subtitulo: '',
+            descripcion: '',
+        });
+    }
+    
+    renderBlocks();
+    syncHiddenFields();
+});
+</script>
+{% endblock %}
+
+
+
+
+

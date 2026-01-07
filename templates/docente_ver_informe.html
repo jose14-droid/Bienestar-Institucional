@@ -1,0 +1,176 @@
+{% extends "docente_base.html" %}
+
+{% block docente_content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>Informe de Estudiante</h4>
+                    <div>
+                        <a href="{{ url_for('docente.imprimir_informe', informe_id=informe.id) }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-print me-2"></i>Imprimir
+                        </a>
+                        <a href="{{ url_for('docente.informes') }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-arrow-left me-2"></i>Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h2 class="mb-3">{{ informe.titulo }}</h2>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Estudiante:</strong> {{ informe.usuario.nombre_completo or informe.usuario.username }}</p>
+                                <p class="mb-2"><strong>Email:</strong> {{ informe.usuario.email or 'No registrado' }}</p>
+                                {% if informe.usuario.telefono %}
+                                <p class="mb-2"><strong>Teléfono:</strong> {{ informe.usuario.telefono }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Fecha de Creación:</strong> {{ informe.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p class="mb-2"><strong>Estado:</strong> 
+                                    <span class="badge bg-{{ 'success' if informe.estado == 'enviado' else 'warning' if informe.estado == 'pendiente' else 'info' if informe.estado == 'leido' else 'secondary' }}">
+                                        {{ informe.estado.title() }}
+                                    </span>
+                                </p>
+                                {% if informe.tipo_sesion %}
+                                <p class="mb-2"><strong>Tipo de Sesión:</strong> 
+                                    <span class="badge bg-primary">{{ informe.tipo_sesion }}</span>
+                                </p>
+                                {% endif %}
+                                {% if informe.cita %}
+                                <p class="mb-2"><strong>Cita Relacionada:</strong> 
+                                    <span class="badge bg-success">Cita #{{ informe.cita.id }} - {{ informe.cita.fecha.strftime('%d/%m/%Y') }} a las {{ informe.cita.hora.strftime('%H:%M') }}</span>
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if informe.cita %}
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading"><i class="fas fa-calendar-check me-2"></i>Información de la Cita</h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Fecha:</strong> {{ informe.cita.fecha.strftime('%d/%m/%Y') }}</p>
+                                <p class="mb-2"><strong>Hora:</strong> {{ informe.cita.hora.strftime('%H:%M') }}</p>
+                                <p class="mb-2"><strong>Estado:</strong> 
+                                    <span class="badge bg-{{ 'warning' if informe.cita.estado == 'pendiente' else 'success' if informe.cita.estado == 'confirmada' else 'danger' }}">
+                                        {{ informe.cita.estado.title() }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Motivo:</strong> {{ informe.cita.motivo }}</p>
+                                {% if informe.cita.observaciones %}
+                                <p class="mb-2"><strong>Observaciones:</strong> {{ informe.cita.observaciones }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="mb-4">
+                        <h5 class="mb-3">Contenido del Informe</h5>
+                        <div class="p-3 bg-light rounded">
+                            {{ informe.contenido | nl2br }}
+                        </div>
+                    </div>
+                    
+                    {% if informe.observaciones %}
+                    <div class="mb-4">
+                        <h5 class="mb-3">Observaciones</h5>
+                        <div class="p-3 bg-light rounded">
+                            {{ informe.observaciones | nl2br }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% set archivos_docente = informe.get_archivos_adjuntos() %}
+                    {% set archivos_admin = informe.get_archivos_admin() %}
+                    
+                    {% if informe.tipo == 'docente' and archivos_docente %}
+                    <div class="mb-4">
+                        <h5 class="mb-3"><i class="fas fa-paperclip me-2"></i>Archivos Adjuntos (Enviados por mí)</h5>
+                        <div class="list-group">
+                            {% for archivo in archivos_docente %}
+                            <a href="{{ url_for('docente.descargar_archivo_adjunto', informe_id=informe.id, filename=archivo) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas {{ get_file_icon(archivo) }} me-2"></i>
+                                        <strong>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}</strong>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">
+                                        <i class="fas fa-download me-1"></i>Descargar
+                                    </span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% elif archivos_docente %}
+                    <div class="mb-4">
+                        <h5 class="mb-3"><i class="fas fa-paperclip me-2"></i>Archivos Adjuntos</h5>
+                        <div class="list-group">
+                            {% for archivo in archivos_docente %}
+                            <a href="{{ url_for('docente.descargar_archivo_adjunto', informe_id=informe.id, filename=archivo) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas {{ get_file_icon(archivo) }} me-2"></i>
+                                        <strong>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}</strong>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">
+                                        <i class="fas fa-download me-1"></i>Descargar
+                                    </span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if informe.tipo == 'docente' and archivos_admin %}
+                    <div class="mb-4">
+                        <h5 class="mb-3"><i class="fas fa-file-upload me-2"></i>Archivos Añadidos por el Admin</h5>
+                        <div class="list-group">
+                            {% for archivo in archivos_admin %}
+                            <a href="{{ url_for('docente.descargar_archivo_adjunto', informe_id=informe.id, filename=archivo) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas {{ get_file_icon(archivo) }} me-2"></i>
+                                        <strong>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}</strong>
+                                    </div>
+                                    <span class="badge bg-success rounded-pill">
+                                        <i class="fas fa-download me-1"></i>Descargar
+                                    </span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <p class="text-muted small">
+                            {% if informe.tipo == 'docente' %}
+                                <strong>Enviado por:</strong> {{ informe.docente_remitente.nombre_completo or informe.docente_remitente.username }} (Yo)<br>
+                            {% else %}
+                                <strong>Creado por:</strong> {{ informe.admin.nombre_completo or informe.admin.username }} (Admin)<br>
+                            {% endif %}
+                            <strong>Fecha:</strong> {{ informe.fecha_creacion.strftime('%d de %B de %Y a las %H:%M') }}
+                            {% if informe.fecha_modificacion %}
+                            <br><strong>Última Modificación:</strong> {{ informe.fecha_modificacion.strftime('%d de %B de %Y a las %H:%M') }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

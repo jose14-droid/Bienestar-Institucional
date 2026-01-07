@@ -1,0 +1,108 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Aplicantes - {{ oferta.titulo }} - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-users me-2"></i>Aplicantes para: {{ oferta.titulo }}</h2>
+                    <p class="text-muted mb-0">{{ oferta.empresa }} - {{ oferta.ubicacion }}</p>
+                </div>
+                <a href="{{ url_for('admin.ofertas') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Ofertas
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {% if aplicantes %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Total de Aplicantes: {{ aplicantes|length }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Usuario</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Cédula</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Fecha de Aplicación</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in aplicantes %}
+                                    {% set aplicacion = item.usuario %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ aplicacion.username }}</td>
+                                        <td>{{ aplicacion.nombre_completo or 'N/A' }}</td>
+                                        <td>{{ aplicacion.cedula or 'N/A' }}</td>
+                                        <td>{{ aplicacion.email or 'N/A' }}</td>
+                                        <td>{{ aplicacion.telefono or 'N/A' }}</td>
+                                        <td>
+                                            {% if item.fecha_aplicacion %}
+                                                {{ item.fecha_aplicacion.strftime('%d/%m/%Y %H:%M') }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.estado == 'pendiente' %}
+                                                <span class="badge bg-warning">Pendiente</span>
+                                            {% elif item.estado == 'revisada' %}
+                                                <span class="badge bg-info">Revisada</span>
+                                            {% elif item.estado == 'aceptada' %}
+                                                <span class="badge bg-success">Aceptada</span>
+                                            {% elif item.estado == 'rechazada' %}
+                                                <span class="badge bg-danger">Rechazada</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ item.estado or 'Pendiente' }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('user.perfil') }}?usuario_id={{ aplicacion.id }}" class="btn btn-outline-primary" title="Ver Perfil">
+                                                    <i class="fas fa-user"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-users text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No hay aplicantes para esta oferta</h4>
+                        <p class="text-muted">Aún no hay usuarios que hayan aplicado a esta oferta laboral</p>
+                        <a href="{{ url_for('admin.ofertas') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a Ofertas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

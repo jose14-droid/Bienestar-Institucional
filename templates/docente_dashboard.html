@@ -1,0 +1,234 @@
+{% extends "docente_base.html" %}
+
+{% block title %}Panel Docente - {{ usuario.nombre_completo or usuario.username }}{% endblock %}
+
+{% block docente_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Panel de Docente</h1>
+        <p class="text-muted">Bienvenido{% if usuario.nombre_completo %}, {{ usuario.nombre_completo }}{% endif %}</p>
+    </div>
+    <div class="text-end">
+        <span class="badge bg-info fs-6">Docente</span>
+    </div>
+</div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_usuarios }}</h4>
+                            <p class="mb-0">Usuarios</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_citas }}</h4>
+                            <p class="mb-0">Total Citas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ citas_pendientes }}</h4>
+                            <p class="mb-0">Citas Pendientes</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ citas_confirmadas }}</h4>
+                            <p class="mb-0">Citas Confirmadas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4 g-3">
+        <div class="col-12">
+            <h4 class="mb-3">Acciones Rápidas</h4>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.usuarios') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users text-primary mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Ver Usuarios</h6>
+                    <p class="card-text small text-muted">Gestionar y monitorear usuarios</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.citas') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt text-success mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Ver Citas</h6>
+                    <p class="card-text small text-muted">Monitorear todas las citas</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.reportes') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar text-warning mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Reportes</h6>
+                    <p class="card-text small text-muted">Ver estadísticas y reportes</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.informes') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt text-info mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Informes de Estudiantes</h6>
+                    <p class="card-text small text-muted">Ver informes de mis estudiantes</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- User Status Overview -->
+    <div class="row mb-4 g-3">
+        <div class="col-12 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Estado de Usuarios</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <h3 class="text-success">{{ usuarios_activos }}</h3>
+                                <p class="text-muted mb-0">Activos</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="text-danger">{{ usuarios_inactivos }}</h3>
+                            <p class="text-muted mb-0">Inactivos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Acceso Rápido</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('docente.informes') }}" class="btn btn-outline-info">
+                            <i class="fas fa-file-alt me-2"></i>Ver Informes de Estudiantes
+                        </a>
+                        <a href="{{ url_for('docente.reportes') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-line me-2"></i>Ver Estadísticas
+                        </a>
+                        <a href="{{ url_for('docente.exportar_reporte') }}" class="btn btn-outline-success">
+                            <i class="fas fa-download me-2"></i>Exportar Reporte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Appointments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Citas Recientes</h5>
+                    <a href="{{ url_for('docente.citas') }}" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+                </div>
+                <div class="card-body">
+                    {% if citas_recientes %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Motivo</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cita in citas_recientes[:10] %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                                                    {{ cita.usuario.nombre_completo[0] }}
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">{{ cita.usuario.nombre_completo }}</div>
+                                                    <small class="text-muted">{{ cita.usuario.cedula }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ cita.motivo }}</td>
+                                        <td>{{ cita.fecha.strftime('%d/%m/%Y') }}</td>
+                                        <td>{{ cita.hora.strftime('%H:%M') }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ 'warning' if cita.estado == 'pendiente' else 'success' if cita.estado == 'confirmada' else 'danger' }}">
+                                                {{ cita.estado.title() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('docente.usuario_detalle', usuario_id=cita.usuario.id) }}" class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                            <p>No hay citas registradas</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+{% endblock %}

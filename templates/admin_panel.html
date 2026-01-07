@@ -1,0 +1,338 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Panel Admin - {{ usuario.nombre_completo or usuario.username }}{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Panel de Administración</h1>
+        <p class="text-muted">Bienvenido, {{ usuario.nombre_completo or usuario.username }}</p>
+    </div>
+    <div class="text-end">
+        <span class="badge bg-danger fs-6">Administrador</span>
+    </div>
+</div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_usuarios }}</h4>
+                            <p class="mb-0">Usuarios</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_citas }}</h4>
+                            <p class="mb-0">Citas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_eventos }}</h4>
+                            <p class="mb-0">Eventos</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ total_ofertas }}</h4>
+                            <p class="mb-0">Ofertas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-briefcase fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notificación de solicitudes pendientes -->
+    {% if solicitudes_pendientes and solicitudes_pendientes > 0 %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>¡Atención!</strong> Tienes <strong>{{ solicitudes_pendientes }}</strong> solicitud{{ 'es' if solicitudes_pendientes > 1 else '' }} de reset de contraseña pendiente{{ 's' if solicitudes_pendientes > 1 else '' }}.
+        <a href="{{ url_for('admin.solicitudes_reset') }}" class="alert-link ms-2">
+            <i class="fas fa-key me-1"></i>Ver solicitudes
+        </a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    <!-- Notificación de citas pendientes -->
+    {% if citas_pendientes and citas_pendientes > 0 %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="fas fa-calendar-check me-2"></i>
+        <strong>¡Nueva cita!</strong> Tienes <strong>{{ citas_pendientes }}</strong> cita{{ 's' if citas_pendientes > 1 else '' }} pendiente{{ 's' if citas_pendientes > 1 else '' }} que requiere{{ 'n' if citas_pendientes > 1 else '' }} tu atención.
+        <a href="/admin/citas" class="alert-link ms-2">
+            <i class="fas fa-calendar-check me-1"></i>Ver citas
+        </a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    <!-- Segunda fila de estadísticas -->
+    {% if (solicitudes_pendientes and solicitudes_pendientes > 0) or (citas_pendientes and citas_pendientes > 0) %}
+    <div class="row mb-4">
+        {% if solicitudes_pendientes and solicitudes_pendientes > 0 %}
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ solicitudes_pendientes }}</h4>
+                            <p class="mb-0">Solicitudes Pendientes</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-key fa-2x"></i>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('admin.solicitudes_reset') }}" class="text-white text-decoration-none mt-2 d-block">
+                        <small>Ver solicitudes <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if citas_pendientes and citas_pendientes > 0 %}
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-0">{{ citas_pendientes }}</h4>
+                            <p class="mb-0">Citas Pendientes</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                        </div>
+                    </div>
+                    <a href="/admin/citas" class="text-white text-decoration-none mt-2 d-block">
+                        <small>Ver citas <i class="fas fa-arrow-right"></i></small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4 g-3">
+        <div class="col-12">
+            <h4 class="mb-3">Gestión del Sistema</h4>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <a href="{{ url_for('admin.usuarios') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users text-primary mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Usuarios</h6>
+                    <p class="card-text small text-muted">Gestionar usuarios del sistema</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <a href="{{ url_for('admin.eventos') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt text-success mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Eventos</h6>
+                    <p class="card-text small text-muted">Crear y gestionar eventos</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <a href="{{ url_for('admin.ofertas') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-briefcase text-warning mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Ofertas Laborales</h6>
+                    <p class="card-text small text-muted">Publicar ofertas de trabajo</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3 mb-3">
+            <a href="{{ url_for('cita.citas') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check text-info mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Citas</h6>
+                    <p class="card-text small text-muted">Gestionar citas programadas</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Docente Functions -->
+    <div class="row mb-4 g-3">
+        <div class="col-12">
+            <h4 class="mb-3">Funciones de Docente</h4>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.usuarios') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users text-primary mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Ver Usuarios</h6>
+                    <p class="card-text small text-muted">Monitorear usuarios del sistema</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.citas') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt text-success mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Ver Citas</h6>
+                    <p class="card-text small text-muted">Monitorear todas las citas</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('docente.reportes') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar text-warning mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Reportes</h6>
+                    <p class="card-text small text-muted">Ver estadísticas y reportes</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Bienestar Sections -->
+    <div class="row mb-4 g-3">
+        <div class="col-12">
+            <h4 class="mb-3">Secciones de Bienestar</h4>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('public.programas') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-heart text-danger mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Programas</h6>
+                    <p class="card-text small text-muted">Programas integrales de bienestar</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('public.servicios') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-hands-helping text-success mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Servicios</h6>
+                    <p class="card-text small text-muted">Servicios especializados disponibles</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a href="{{ url_for('public.proyectos') }}" class="card text-decoration-none h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-project-diagram text-warning mb-2" style="font-size: 2rem;"></i>
+                    <h6 class="card-title">Proyectos</h6>
+                    <p class="card-text small text-muted">Proyectos especiales en desarrollo</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    {% if actividades %}
+                    <div class="list-group list-group-flush">
+                        {% for actividad in actividades %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    {% if actividad.accion == 'crear' %}
+                                        <i class="fas fa-plus-circle text-success me-2"></i>
+                                    {% elif actividad.accion == 'editar' %}
+                                        <i class="fas fa-edit text-primary me-2"></i>
+                                    {% elif actividad.accion == 'eliminar' %}
+                                        <i class="fas fa-trash text-danger me-2"></i>
+                                    {% elif actividad.accion == 'aprobar' %}
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                    {% elif actividad.accion == 'rechazar' %}
+                                        <i class="fas fa-times-circle text-danger me-2"></i>
+                                    {% elif actividad.accion == 'posponer' %}
+                                        <i class="fas fa-calendar-alt text-warning me-2"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle text-info me-2"></i>
+                                    {% endif %}
+                                    <h6 class="mb-0">{{ actividad.descripcion }}</h6>
+                                </div>
+                                <p class="mb-1 text-muted small">
+                                    <i class="fas fa-user me-1"></i>{{ actividad.usuario.nombre_completo or actividad.usuario.username }}
+                                    {% if actividad.entidad %}
+                                    | <i class="fas fa-tag me-1"></i>{{ actividad.entidad.title() }}
+                                    {% endif %}
+                                </p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ actividad.fecha.strftime('%d/%m/%Y %H:%M') }}
+                                </small>
+                            </div>
+                            <div>
+                                {% if actividad.accion == 'crear' %}
+                                    <span class="badge bg-success">Creado</span>
+                                {% elif actividad.accion == 'editar' %}
+                                    <span class="badge bg-primary">Editado</span>
+                                {% elif actividad.accion == 'eliminar' %}
+                                    <span class="badge bg-danger">Eliminado</span>
+                                {% elif actividad.accion == 'aprobar' %}
+                                    <span class="badge bg-success">Aprobado</span>
+                                {% elif actividad.accion == 'rechazar' %}
+                                    <span class="badge bg-danger">Rechazado</span>
+                                {% elif actividad.accion == 'posponer' %}
+                                    <span class="badge bg-warning">Pospuesto</span>
+                                {% else %}
+                                    <span class="badge bg-info">{{ actividad.accion.title() }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-history text-muted mb-3" style="font-size: 3rem;"></i>
+                        <p class="text-muted">No hay actividades registradas aún</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

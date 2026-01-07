@@ -1,0 +1,104 @@
+{% extends "docente_base.html" %}
+
+{% block title %}Enviar Reporte al Admin - Panel Docente{% endblock %}
+
+{% block docente_content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Enviar Reporte al Administrador</h4>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% if not estudiantes or estudiantes|length == 0 %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users-slash text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted mb-3">No tiene estudiantes asignados</h4>
+                        <p class="text-muted mb-4">
+                            Usted no tiene estudiantes o usuarios agregados. Para poder enviar reportes, 
+                            necesita que un administrador le asigne estudiantes.
+                        </p>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Información:</strong> Contacte al administrador del sistema para que le asigne estudiantes 
+                            a los cuales pueda dar seguimiento y enviar reportes.
+                        </div>
+                        <a href="{{ url_for('docente.informes') }}" class="btn btn-secondary mt-3">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a Informes
+                        </a>
+                    </div>
+                {% else %}
+                <form method="POST" action="{{ url_for('docente.nuevo_reporte') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="usuario_id" class="form-label">Estudiante <span class="text-danger">*</span></label>
+                        <select class="form-select" id="usuario_id" name="usuario_id" required>
+                            <option value="">Seleccione un estudiante asignado</option>
+                            {% for estudiante in estudiantes %}
+                            <option value="{{ estudiante.id }}">
+                                {{ estudiante.nombre_completo or estudiante.username }} - {{ estudiante.cedula or 'Sin cédula' }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Solo puede enviar reportes de estudiantes que le han sido asignados</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título del Reporte <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required 
+                               placeholder="Ej: Seguimiento de caso - Apoyo psicológico">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="contenido" class="form-label">Contenido del Reporte <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="contenido" name="contenido" rows="10" required 
+                                  placeholder="Describa el seguimiento del caso, observaciones, avances, recomendaciones, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones Adicionales</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="4" 
+                                  placeholder="Observaciones adicionales, notas, comentarios, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="archivos" class="form-label">Archivos Adjuntos (Opcional)</label>
+                        <input type="file" class="form-control" id="archivos" name="archivos" multiple 
+                               accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx">
+                        <div class="form-text">
+                            Puede adjuntar documentos PDF, imágenes (JPG, PNG, GIF) o documentos (DOC, DOCX). 
+                            Máximo 16MB por archivo.
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Nota:</strong> Este reporte será enviado al administrador. El administrador podrá añadir fotografías y documentos adicionales al reporte después de recibirlo.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('docente.informes') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-info">
+                            <i class="fas fa-paper-plane me-2"></i>Enviar Reporte
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

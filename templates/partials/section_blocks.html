@@ -1,0 +1,30 @@
+{% macro render_section_blocks(blocks, accent='primary') %}
+{% if blocks %}
+<div class="structured-blocks">
+    {% for block in blocks %}
+    <div class="structured-card border-start border-3 border-{{ accent }}">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                {% if block.titulo %}
+                <h3 class="structured-title">{{ block.titulo }}</h3>
+                {% endif %}
+                {% if block.subtitulo %}
+                <p class="structured-subtitle text-muted mb-2">{{ block.subtitulo }}</p>
+                {% endif %}
+            </div>
+            <span class="structured-number">{{ '%02d' % (loop.index) }}</span>
+        </div>
+        {% if block.descripcion %}
+        <p class="structured-description">{{ block.descripcion }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
+
+
+
+
+

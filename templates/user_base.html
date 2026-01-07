@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Overlay para sidebar en móvil/tablet -->
+<div class="sidebar-overlay"></div>
+
+<div class="container-fluid">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="sidebar-content">
+                <!-- Información del Usuario -->
+                <div class="user-info-section">
+                    <div class="text-white d-flex align-items-center">
+                        {% set usuario_actual = get_current_user() %}
+                        {% if usuario_actual and usuario_actual.foto_perfil %}
+                        <img src="{{ url_for('foto_perfil', filename=usuario_actual.foto_perfil) }}" 
+                             alt="Foto de perfil" 
+                             class="rounded-circle me-2" 
+                             style="width: 40px; height: 40px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                             style="width: 40px; height: 40px; font-size: 1.2rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <small class="d-block fw-bold mb-1">Bienvenido, {{ session.username }}</small>
+                        </div>
+                    </div>
+                </div>
+                <hr class="sidebar-divider">
+                
+                <!-- Secciones -->
+                <h5 class="sidebar-title">Secciones</h5>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if request.endpoint == 'index' %}active{% endif %}">
+                        <a href="{{ url_for('public.index') }}" class="sidebar-link {% if request.endpoint == 'index' or request.endpoint == 'public.index' %}active{% endif %}">
+                            <i class="fas fa-home me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'programas' %}active{% endif %}">
+                        <a href="{{ url_for('public.programas') }}" class="sidebar-link {% if request.endpoint == 'programas' %}active{% endif %}">
+                            <i class="fas fa-book me-2"></i>Programas
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'servicios' %}active{% endif %}">
+                        <a href="{{ url_for('public.servicios') }}" class="sidebar-link {% if request.endpoint == 'servicios' %}active{% endif %}">
+                            <i class="fas fa-concierge-bell me-2"></i>Servicios
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                        <a href="{{ url_for('public.proyectos') }}" class="sidebar-link {% if request.endpoint == 'proyectos' %}active{% endif %}">
+                            <i class="fas fa-project-diagram me-2"></i>Proyectos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'eventos' %}active{% endif %}">
+                        <a href="{{ url_for('public.eventos') }}" class="sidebar-link {% if request.endpoint == 'eventos' %}active{% endif %}">
+                            <i class="fas fa-calendar-alt me-2"></i>Eventos
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                        <a href="{{ url_for('public.ofertas_laborales') }}" class="sidebar-link {% if request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                            <i class="fas fa-briefcase me-2"></i>Ofertas Laborales
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if request.endpoint == 'noticias' %}active{% endif %}">
+                        <a href="{{ url_for('public.noticias') }}" class="sidebar-link {% if request.endpoint == 'noticias' %}active{% endif %}">
+                            <i class="fas fa-newspaper me-2"></i>Noticias
+                        </a>
+                    </li>
+                </ul>
+                
+                <hr class="sidebar-divider">
+                
+                <!-- Opciones Generales -->
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('user.dashboard') }}" class="sidebar-link {% if request.endpoint == 'dashboard' or request.endpoint == 'user.dashboard' %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Mi Dashboard
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Mi Panel -->
+                <div class="user-menu-section">
+                    <hr class="sidebar-divider">
+                    <h6 class="user-menu-title">MI PANEL</h6>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item {% if request.endpoint == 'citas' and session.rol == 'usuario' %}active{% endif %}">
+                            <a href="{{ url_for('cita.citas') }}" class="sidebar-link {% if request.endpoint == 'citas' and session.rol == 'usuario' %}active{% endif %}">
+                                <i class="fas fa-calendar-check me-2"></i>Mis Citas
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'agendar_cita' %}active{% endif %}">
+                            <a href="{{ url_for('cita.agendar_cita') }}" class="sidebar-link {% if request.endpoint == 'agendar_cita' %}active{% endif %}">
+                                <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'horarios_disponibles' %}active{% endif %}">
+                            <a href="{{ url_for('cita.horarios_disponibles') }}" class="sidebar-link {% if request.endpoint == 'horarios_disponibles' %}active{% endif %}">
+                                <i class="fas fa-clock me-2"></i>Horarios
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'perfil' %}active{% endif %}">
+                            <a href="{{ url_for('user.perfil') }}" class="sidebar-link {% if request.endpoint == 'perfil' %}active{% endif %}">
+                                <i class="fas fa-user me-2"></i>Mi Perfil
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Cerrar Sesión -->
+                <div class="mt-3">
+                    <hr class="sidebar-divider">
+                    <a href="{{ url_for('auth.logout') }}" class="sidebar-link text-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 main-content">
+            <div class="content-wrapper">
+                <div class="content-body p-4">
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) | unique_messages %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'warning' else 'info-circle' }} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Alerta de datos faltantes -->
+                    {% set datos_faltantes = verificar_datos_faltantes() %}
+                    {% if datos_faltantes %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>¡Atención!</strong> Por favor, actualice sus datos en Mi Perfil. 
+                            {% if datos_faltantes|length == 2 %}
+                                Faltan completar: <strong>{{ datos_faltantes[0] }}</strong> y <strong>{{ datos_faltantes[1] }}</strong>.
+                            {% elif 'correo electrónico' in datos_faltantes %}
+                                Falta completar: <strong>correo electrónico</strong> (necesario para recibir notificaciones).
+                            {% elif 'cédula' in datos_faltantes %}
+                                Falta completar: <strong>cédula</strong>.
+                            {% else %}
+                                Falta completar: <strong>{{ datos_faltantes[0] }}</strong>.
+                            {% endif %}
+                            <a href="{{ url_for('user.perfil') }}" class="alert-link ms-2">
+                                <i class="fas fa-user-edit me-1"></i>Ir a Mi Perfil
+                            </a>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                    
+                    {% block user_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.container-fluid {
+    padding: 0;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 0;
+    border-radius: 0 20px 20px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #28a745, #ffd700);
+    z-index: 1;
+}
+
+.sidebar-content {
+    padding: 2.5rem 1.25rem 2rem 1.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.user-info-section {
+    padding: 0.875rem 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-title {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 0.5rem;
+}
+
+.sidebar-divider {
+    border-color: rgba(255, 255, 255, 0.2);
+    margin: 1.25rem 0;
+    border-width: 1px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.4rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin: 0.2rem 0;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-link.active {
+    background-color: #ffd700;
+    color: #000;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    transform: translateX(2px);
+}
+
+.sidebar-link.active::before {
+    display: none;
+}
+
+.user-menu-section {
+    margin-top: 0.5rem;
+}
+
+.user-menu-title {
+    color: #0d6efd;
+    font-weight: bold;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0 0.5rem;
+}
+
+.user-menu-section .sidebar-link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+}
+
+.user-menu-section .sidebar-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.content-wrapper {
+    background-color: white;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.content-body {
+    padding: 2rem;
+}
+
+/* ===== SIDEBAR RESPONSIVO PARA MÓVILES Y TABLETS ===== */
+@media (max-width: 991.98px) {
+    /* Sidebar oculto por defecto en móviles y tablets */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 280px !important;
+        max-width: 85vw !important;
+        height: 100vh !important;
+        z-index: 1050 !important;
+        transition: left 0.3s ease-in-out !important;
+        box-shadow: 2px 0 15px rgba(0,0,0,0.3) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .sidebar.show {
+        left: 0 !important;
+    }
+    
+    /* Overlay oscuro cuando sidebar está abierto */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 1040;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(2px);
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+    
+    /* Main content ocupa todo el ancho */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Ajustar contenido cuando sidebar está abierto */
+    body.sidebar-open {
+        overflow: hidden;
+    }
+    
+    .content-wrapper {
+        margin: 0.5rem;
+        border-radius: 8px;
+        width: 100%;
+    }
+    
+    .content-body {
+        padding: 1rem;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 575.98px) {
+    .sidebar {
+        width: 260px !important;
+        max-width: 90vw !important;
+    }
+    
+    .content-wrapper {
+        margin: 0.25rem;
+        border-radius: 8px;
+    }
+    
+    .content-body {
+        padding: 0.75rem;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .sidebar {
+        width: 300px !important;
+    }
+    
+    .content-wrapper {
+        margin: 1rem;
+    }
+    
+    .content-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Desktop - Sidebar siempre visible */
+@media (min-width: 992px) {
+    .sidebar {
+        position: sticky !important;
+        top: 0 !important;
+        left: 0 !important;
+        min-height: 100vh !important;
+        border-radius: 0 20px 20px 0 !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+</style>
+{% endblock %}
+

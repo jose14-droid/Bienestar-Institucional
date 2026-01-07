@@ -1,0 +1,104 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Editar Oferta Laboral - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-briefcase me-2"></i>Editar Oferta Laboral</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título del Puesto</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" value="{{ oferta.titulo }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción del Puesto</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required>{{ oferta.descripcion }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="empresa" class="form-label">Empresa</label>
+                                <input type="text" class="form-control" id="empresa" name="empresa" value="{{ oferta.empresa }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ubicacion" class="form-label">Ubicación</label>
+                                <input type="text" class="form-control" id="ubicacion" name="ubicacion" value="{{ oferta.ubicacion }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="salario" class="form-label">Salario (Opcional)</label>
+                                <input type="text" class="form-control" id="salario" name="salario" value="{{ oferta.salario or '' }}" placeholder="Ej: $800 - $1200">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tipo_contrato" class="form-label">Tipo de Contrato</label>
+                                <select class="form-select" id="tipo_contrato" name="tipo_contrato">
+                                    <option value="">Seleccione un tipo</option>
+                                    <option value="tiempo_completo" {% if oferta.tipo_contrato == 'tiempo_completo' %}selected{% endif %}>Tiempo Completo</option>
+                                    <option value="medio_tiempo" {% if oferta.tipo_contrato == 'medio_tiempo' %}selected{% endif %}>Medio Tiempo</option>
+                                    <option value="temporal" {% if oferta.tipo_contrato == 'temporal' %}selected{% endif %}>Temporal</option>
+                                    <option value="por_proyecto" {% if oferta.tipo_contrato == 'por_proyecto' %}selected{% endif %}>Por Proyecto</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="requisitos" class="form-label">Requisitos</label>
+                            <textarea class="form-control" id="requisitos" name="requisitos" rows="3" placeholder="Lista los requisitos para el puesto...">{{ oferta.requisitos or '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="beneficios" class="form-label">Beneficios</label>
+                            <textarea class="form-control" id="beneficios" name="beneficios" rows="3" placeholder="Lista los beneficios que ofrece la empresa...">{{ oferta.beneficios or '' }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contacto" class="form-label">Información de Contacto</label>
+                                <input type="text" class="form-control" id="contacto" name="contacto" value="{{ oferta.contacto or '' }}" placeholder="Email o teléfono de contacto">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha_vencimiento" class="form-label">Fecha de Vencimiento (Opcional)</label>
+                                <input type="date" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ oferta.fecha_vencimiento.strftime('%Y-%m-%d') if oferta.fecha_vencimiento else '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.ofertas') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha mínima como hoy para la fecha de vencimiento
+    const fechaVencimiento = document.getElementById('fecha_vencimiento');
+    if (fechaVencimiento) {
+        const today = new Date();
+        fechaVencimiento.min = today.toISOString().split('T')[0];
+    }
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+

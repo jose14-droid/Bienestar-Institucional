@@ -1,0 +1,118 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Gestión de Ofertas Laborales - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-briefcase me-2"></i>Gestión de Ofertas Laborales</h2>
+                <a href="{{ url_for('admin.nueva_oferta') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nueva Oferta
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    {% if ofertas %}
+        <div class="row">
+            {% for oferta in ofertas %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">{{ oferta.empresa }}</span>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('admin.editar_oferta', oferta_id=oferta.id) }}"><i class="fas fa-edit me-2"></i>Editar</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.oferta_aplicantes', oferta_id=oferta.id) }}"><i class="fas fa-users me-2"></i>Ver Aplicantes</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ url_for('admin.eliminar_oferta', oferta_id=oferta.id) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta oferta?');">
+                                        <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; width: 100%; text-align: left;">
+                                            <i class="fas fa-trash me-2"></i>Eliminar
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ oferta.titulo }}</h5>
+                        <p class="card-text">{{ oferta.descripcion[:100] }}{% if oferta.descripcion|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="mb-2">
+                            <i class="fas fa-building text-primary me-2"></i>
+                            <strong>Empresa:</strong> {{ oferta.empresa }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                            <strong>Ubicación:</strong> {{ oferta.ubicacion }}
+                        </div>
+                        {% if oferta.salario %}
+                        <div class="mb-2">
+                            <i class="fas fa-dollar-sign text-success me-2"></i>
+                            <strong>Salario:</strong> {{ oferta.salario }}
+                        </div>
+                        {% endif %}
+                        {% if oferta.tipo_contrato %}
+                        <div class="mb-2">
+                            <i class="fas fa-clock text-info me-2"></i>
+                            <strong>Tipo:</strong> {{ oferta.tipo_contrato.replace('_', ' ').title() }}
+                        </div>
+                        {% endif %}
+                        {% if oferta.fecha_vencimiento %}
+                        <div class="mb-2">
+                            <i class="fas fa-calendar text-danger me-2"></i>
+                            <strong>Vence:</strong> {{ oferta.fecha_vencimiento.strftime('%d/%m/%Y') }}
+                        </div>
+                        {% endif %}
+                        <div class="mb-2">
+                            <i class="fas fa-{{ 'check' if oferta.activa else 'times' }} text-{{ 'success' if oferta.activa else 'danger' }} me-2"></i>
+                            <strong>Estado:</strong> {{ 'Activa' if oferta.activa else 'Inactiva' }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                Publicado: {{ oferta.fecha_publicacion.strftime('%d/%m/%Y') }}
+                            </small>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('admin.editar_oferta', oferta_id=oferta.id) }}" class="btn btn-outline-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('admin.oferta_aplicantes', oferta_id=oferta.id) }}" class="btn btn-outline-info" title="Ver Aplicantes">
+                                    <i class="fas fa-users"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('admin.eliminar_oferta', oferta_id=oferta.id) }}" style="display: inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta oferta?');">
+                                    <button type="submit" class="btn btn-outline-danger" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-briefcase text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No hay ofertas laborales creadas</h4>
+                        <p class="text-muted">Crea la primera oferta laboral para comenzar</p>
+                        <a href="{{ url_for('admin.nueva_oferta') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Primera Oferta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

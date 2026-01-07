@@ -1,0 +1,13 @@
+# Framework web
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Base de datos y ORM
+Flask-SQLAlchemy==3.0.5
+
+# Correo electrónico
+Flask-Mail==0.9.1
+email-validator==2.0.0
+
+# Variables de entorno
+python-dotenv==1.0.0

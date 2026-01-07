@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Overlay para sidebar en móvil/tablet -->
+<div class="sidebar-overlay"></div>
+
+<div class="container-fluid">
+    <div class="row g-0">
+        <!-- Sidebar Fijo - NO MODIFICAR ESTRUCTURA -->
+        <!-- Este sidebar debe mantenerse fijo y consistente en todas las páginas de admin -->
+{% if session.rol in ['admin', 'administrador'] %}
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="sidebar-content">
+                <!-- Secciones Públicas -->
+                <div class="user-menu-section">
+                    <h5 class="sidebar-title">SECCIONES</h5>
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item {% if request.endpoint == 'index' or request.endpoint == 'public.index' %}active{% endif %}">
+                            <a href="{{ url_for('public.index') }}" class="sidebar-link {% if request.endpoint == 'index' or request.endpoint == 'public.index' %}active{% endif %}">
+                                <i class="fas fa-home me-2"></i>Inicio
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'public.programas' or request.endpoint == 'programas' %}active{% endif %}">
+                            <a href="{{ url_for('public.programas') }}" class="sidebar-link {% if request.endpoint == 'public.programas' or request.endpoint == 'programas' %}active{% endif %}">
+                                <i class="fas fa-book me-2"></i>Programas
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'public.servicios' or request.endpoint == 'servicios' %}active{% endif %}">
+                            <a href="{{ url_for('public.servicios') }}" class="sidebar-link {% if request.endpoint == 'public.servicios' or request.endpoint == 'servicios' %}active{% endif %}">
+                                <i class="fas fa-concierge-bell me-2"></i>Servicios
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'public.proyectos' or request.endpoint == 'proyectos' %}active{% endif %}">
+                            <a href="{{ url_for('public.proyectos') }}" class="sidebar-link {% if request.endpoint == 'public.proyectos' or request.endpoint == 'proyectos' %}active{% endif %}">
+                                <i class="fas fa-project-diagram me-2"></i>Proyectos
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'public.eventos' or request.endpoint == 'eventos' %}active{% endif %}">
+                            <a href="{{ url_for('public.eventos') }}" class="sidebar-link {% if request.endpoint == 'public.eventos' or request.endpoint == 'eventos' %}active{% endif %}">
+                                <i class="fas fa-calendar-alt me-2"></i>Eventos
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'public.ofertas_laborales' or request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                            <a href="{{ url_for('public.ofertas_laborales') }}" class="sidebar-link {% if request.endpoint == 'public.ofertas_laborales' or request.endpoint == 'ofertas_laborales' %}active{% endif %}">
+                                <i class="fas fa-briefcase me-2"></i>Ofertas Laborales
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'public.noticias' or request.endpoint == 'noticias' %}active{% endif %}">
+                            <a href="{{ url_for('public.noticias') }}" class="sidebar-link {% if request.endpoint == 'public.noticias' or request.endpoint == 'noticias' %}active{% endif %}">
+                                <i class="fas fa-newspaper me-2"></i>Noticias
+                            </a>
+                        </li>
+                        
+                        <!-- Panel Administrativo -->
+                        <li class="sidebar-item {% if request.endpoint == 'admin.usuarios' %}active{% endif %}">
+                            <a href="{{ url_for('admin.usuarios') }}" class="sidebar-link {% if request.endpoint == 'admin.usuarios' %}active{% endif %}">
+                                <i class="fas fa-users me-2"></i>Gestionar Usuarios
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.eventos' or request.endpoint == 'admin.nuevo_evento' or request.endpoint == 'admin.editar_evento' %}active{% endif %}">
+                            <a href="{{ url_for('admin.eventos') }}" class="sidebar-link {% if request.endpoint == 'admin.eventos' or request.endpoint == 'admin.nuevo_evento' or request.endpoint == 'admin.editar_evento' %}active{% endif %}">
+                                <i class="fas fa-calendar-alt me-2"></i>Gestionar Eventos
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.ofertas' or request.endpoint == 'admin.nueva_oferta' or request.endpoint == 'admin.editar_oferta' %}active{% endif %}">
+                            <a href="{{ url_for('admin.ofertas') }}" class="sidebar-link {% if request.endpoint == 'admin.ofertas' or request.endpoint == 'admin.nueva_oferta' or request.endpoint == 'admin.editar_oferta' %}active{% endif %}">
+                                <i class="fas fa-briefcase me-2"></i>Gestionar Ofertas
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.noticias' or request.endpoint == 'admin.nueva_noticia' or request.endpoint == 'admin.editar_noticia' %}active{% endif %}">
+                            <a href="{{ url_for('admin.noticias') }}" class="sidebar-link {% if request.endpoint == 'admin.noticias' or request.endpoint == 'admin.nueva_noticia' or request.endpoint == 'admin.editar_noticia' %}active{% endif %}">
+                                <i class="fas fa-newspaper me-2"></i>Gestionar Noticias
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.informes' or request.endpoint == 'admin.nuevo_informe' or request.endpoint == 'admin.imprimir_informe' or request.endpoint == 'admin.enviar_informe' %}active{% endif %}">
+                            <a href="{{ url_for('admin.informes') }}" class="sidebar-link {% if request.endpoint == 'admin.informes' or request.endpoint == 'admin.nuevo_informe' or request.endpoint == 'admin.imprimir_informe' or request.endpoint == 'admin.enviar_informe' %}active{% endif %}">
+                                <i class="fas fa-file-alt me-2"></i>Gestionar Informes
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.secciones' or request.endpoint == 'admin.editar_seccion' or request.endpoint == 'admin.nueva_seccion' %}active{% endif %}">
+                            <a href="{{ url_for('admin.secciones') }}" class="sidebar-link {% if request.endpoint == 'admin.secciones' or request.endpoint == 'admin.editar_seccion' or request.endpoint == 'admin.nueva_seccion' %}active{% endif %}">
+                                <i class="fas fa-folder-open me-2"></i>Gestionar Secciones
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.horarios' or request.endpoint == 'admin.nuevo_horario' or request.endpoint == 'admin.editar_horario' %}active{% endif %}">
+                            <a href="{{ url_for('admin.horarios') }}" class="sidebar-link {% if request.endpoint == 'admin.horarios' or request.endpoint == 'admin.nuevo_horario' or request.endpoint == 'admin.editar_horario' %}active{% endif %}">
+                                <i class="fas fa-clock me-2"></i>Gestionar Horarios
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.citas' or request.endpoint == 'admin.aprobar_cita' or request.endpoint == 'admin.rechazar_cita' or request.endpoint == 'admin.posponer_cita' or request.endpoint == 'admin.nueva_cita' or request.endpoint == 'admin.editar_cita' %}active{% endif %}">
+                            <a href="{{ url_for('admin.citas') }}" class="sidebar-link {% if request.endpoint == 'admin.citas' or request.endpoint == 'admin.aprobar_cita' or request.endpoint == 'admin.rechazar_cita' or request.endpoint == 'admin.posponer_cita' or request.endpoint == 'admin.nueva_cita' or request.endpoint == 'admin.editar_cita' %}active{% endif %}">
+                                <i class="fas fa-calendar-check me-2"></i>Gestionar Citas
+                                {% set citas_pendientes = contar_citas_pendientes() %}
+                                {% if citas_pendientes > 0 %}
+                                    <span class="badge bg-warning ms-2">{{ citas_pendientes }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'admin.resetear_credenciales' %}active{% endif %}">
+                            <a href="{{ url_for('admin.resetear_credenciales') }}" class="sidebar-link {% if request.endpoint == 'admin.resetear_credenciales' %}active{% endif %}">
+                                <i class="fas fa-key me-2"></i>Resetear Credenciales
+                            </a>
+                        </li>
+                        
+                        <li class="sidebar-item {% if request.endpoint == 'user.dashboard' or request.endpoint == 'dashboard' %}active{% endif %}">
+                            <a href="{{ url_for('user.dashboard') }}" class="sidebar-link {% if request.endpoint == 'user.dashboard' or request.endpoint == 'dashboard' %}active{% endif %}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Mi Dashboard
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.endpoint == 'perfil' or request.endpoint == 'user.perfil' %}active{% endif %}">
+                            <a href="/perfil" class="sidebar-link {% if request.endpoint == 'perfil' or request.endpoint == 'user.perfil' %}active{% endif %}">
+                                <i class="fas fa-user me-2"></i>Mi Perfil
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <hr class="sidebar-divider">
+                
+                <!-- Cerrar Sesión -->
+                <div class="user-menu-section">
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item">
+                            <a href="{{ url_for('auth.logout') }}" class="sidebar-link text-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <div class="{% if session.rol in ['admin', 'administrador'] %}col-md-9 col-lg-10{% else %}col-12{% endif %} main-content">
+            <div class="content-wrapper">
+                <div class="content-body p-4">
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) | unique_messages %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'warning' else 'info-circle' }} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <!-- Alerta de datos faltantes -->
+                    {% set datos_faltantes = verificar_datos_faltantes() %}
+                    {% if datos_faltantes %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>¡Atención!</strong> Por favor, actualice sus datos en Mi Perfil. 
+                            {% if datos_faltantes|length == 2 %}
+                                Faltan completar: <strong>{{ datos_faltantes[0] }}</strong> y <strong>{{ datos_faltantes[1] }}</strong>.
+                            {% elif 'correo electrónico' in datos_faltantes %}
+                                Falta completar: <strong>correo electrónico</strong> (necesario para recibir notificaciones).
+                            {% elif 'cédula' in datos_faltantes %}
+                                Falta completar: <strong>cédula</strong>.
+                            {% else %}
+                                Falta completar: <strong>{{ datos_faltantes[0] }}</strong>.
+                            {% endif %}
+                            <a href="{{ url_for('user.perfil') }}" class="alert-link ms-2">
+                                <i class="fas fa-user-edit me-1"></i>Ir a Mi Perfil
+                            </a>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                    
+                    {% block admin_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Sidebar Fijo - Estilo Azul Oscuro - Desktop */
+@media (min-width: 992px) {
+    .sidebar {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+        min-height: 100vh !important;
+        padding: 0 !important;
+        border-radius: 0 20px 20px 0 !important;
+        position: sticky !important;
+        top: 0 !important;
+        height: 100vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        background-color: #1e3c72 !important;
+        z-index: 100 !important;
+    }
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #0d6efd, #28a745);
+    z-index: 1;
+}
+
+.sidebar-content {
+    padding: 2.5rem 1.25rem 2rem 1.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.user-info-section {
+    padding: 0.875rem 1rem;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.user-info-section .text-white {
+    color: white !important;
+}
+
+.user-info-section .badge {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.sidebar-title {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 0.5rem;
+}
+
+.user-menu-section .sidebar-title {
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+}
+
+.sidebar-divider {
+    border-color: rgba(255, 255, 255, 0.2);
+    margin: 1.25rem 0;
+    border-width: 1px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.4rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin: 0.2rem 0;
+}
+
+.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    text-decoration: none;
+}
+
+.sidebar-link.active {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.4);
+    transform: translateX(2px);
+}
+
+.sidebar-link.text-danger {
+    color: #dc3545 !important;
+}
+
+.sidebar-link.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+.sidebar-link.active::before {
+    display: none;
+}
+
+.user-menu-section {
+    margin-top: 0.5rem;
+}
+
+.user-menu-title {
+    color: #0d6efd !important;
+    font-weight: bold;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0 0.5rem;
+}
+
+/* Asegurar que todos los elementos del sidebar mantengan el estilo azul oscuro */
+.sidebar * {
+    color: inherit;
+}
+
+.sidebar .sidebar-link,
+.sidebar .sidebar-link:visited,
+.sidebar .sidebar-link:link {
+    color: white !important;
+}
+
+.sidebar .sidebar-link.active {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+}
+
+/* Prevenir que cualquier estilo externo cambie el fondo del sidebar */
+.sidebar,
+.sidebar-content,
+.sidebar-menu,
+.sidebar-item {
+    background: transparent !important;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+}
+
+.user-menu-section .sidebar-link {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+}
+
+.user-menu-section .sidebar-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.content-wrapper {
+    background-color: white;
+    margin: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.content-body {
+    padding: 2rem;
+}
+
+/* ===== SIDEBAR RESPONSIVO PARA MÓVILES Y TABLETS ===== */
+@media (max-width: 991.98px) {
+    /* Sidebar oculto por defecto en móviles y tablets */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 280px !important;
+        max-width: 85vw !important;
+        height: 100vh !important;
+        z-index: 1050 !important;
+        transition: left 0.3s ease-in-out !important;
+        box-shadow: 2px 0 15px rgba(0,0,0,0.3) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .sidebar.show {
+        left: 0 !important;
+    }
+    
+    /* Overlay oscuro cuando sidebar está abierto */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 1040;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(2px);
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+    
+    /* Botón de cerrar en el sidebar */
+    .sidebar-close-btn {
+        display: flex !important;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        font-size: 1.2rem;
+    }
+    
+    .sidebar-close-btn:hover,
+    .sidebar-close-btn:active {
+        background: rgba(255,255,255,0.3);
+        transform: rotate(90deg);
+    }
+    
+    /* Main content ocupa todo el ancho */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Ajustar contenido cuando sidebar está abierto */
+    body.sidebar-open {
+        overflow: hidden;
+    }
+    
+    body.sidebar-open .main-content {
+        transform: translateX(0);
+    }
+    
+    .content-wrapper {
+        margin: 0.5rem;
+        border-radius: 8px;
+        width: 100%;
+    }
+    
+    .content-body {
+        padding: 1rem;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 575.98px) {
+    .sidebar {
+        width: 260px !important;
+        max-width: 90vw !important;
+    }
+    
+    .content-wrapper {
+        margin: 0.25rem;
+        border-radius: 8px;
+    }
+    
+    .content-body {
+        padding: 0.75rem;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .sidebar {
+        width: 300px !important;
+    }
+    
+    .content-wrapper {
+        margin: 1rem;
+    }
+    
+    .content-body {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+

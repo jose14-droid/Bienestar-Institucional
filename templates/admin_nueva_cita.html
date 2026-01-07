@@ -1,0 +1,123 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Nueva Cita - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Crear Nueva Cita</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="usuario_id" class="form-label">Usuario <span class="text-danger">*</span></label>
+                        <select class="form-select" id="usuario_id" name="usuario_id" required>
+                            <option value="">Seleccione un usuario</option>
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre_completo or usuario.username }} - {{ usuario.cedula or 'Sin cédula' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha" class="form-label">Fecha <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hora" class="form-label">Hora <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" id="hora" name="hora" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo <span class="text-danger">*</span></label>
+                        <select class="form-select" id="motivo" name="motivo" required>
+                            <option value="">Seleccione un motivo</option>
+                            <optgroup label="Servicios de Bienestar">
+                                <option value="Apoyo Psicológico">Apoyo Psicológico</option>
+                                <option value="Información de Becas">Información de Becas</option>
+                                <option value="Orientación Académica">Orientación Académica</option>
+                                <option value="Apoyo Social">Apoyo Social</option>
+                            </optgroup>
+                            <optgroup label="Otros Servicios">
+                                <option value="Asesoría Laboral">Asesoría Laboral</option>
+                                <option value="Orientación Vocacional">Orientación Vocacional</option>
+                                <option value="Tutorías Académicas">Tutorías Académicas</option>
+                                <option value="Planificación de Carrera">Planificación de Carrera</option>
+                            </optgroup>
+                            <optgroup label="Otros">
+                                <option value="Problemas Personales">Problemas Personales</option>
+                                <option value="Otro">Otro</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="carrera_id" class="form-label">Carrera</label>
+                            <select class="form-select" id="carrera_id" name="carrera_id">
+                                <option value="">Seleccione una carrera</option>
+                                {% for carrera in carreras %}
+                                <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="semestre" class="form-label">Semestre</label>
+                            <select class="form-select" id="semestre" name="semestre">
+                                <option value="">Seleccione un semestre</option>
+                                <option value="1">1° Semestre</option>
+                                <option value="2">2° Semestre</option>
+                                <option value="3">3° Semestre</option>
+                                <option value="4">4° Semestre</option>
+                                <option value="5">5° Semestre</option>
+                                <option value="6">6° Semestre</option>
+                                <option value="7">7° Semestre</option>
+                                <option value="8">8° Semestre</option>
+                                <option value="9">9° Semestre</option>
+                                <option value="10">10° Semestre</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="confirmada">Confirmada</option>
+                            <option value="cancelada">Cancelada</option>
+                            <option value="pospuesta">Pospuesta</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="archivos" class="form-label">Archivos Adjuntos (Opcional)</label>
+                        <input type="file" class="form-control" id="archivos" name="archivos" multiple accept=".pdf,.png,.jpg,.jpeg,.gif">
+                        <small class="form-text text-muted">Puede subir imágenes (PNG, JPG, GIF) y documentos PDF. Máximo 16MB por archivo.</small>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{{ url_for('admin.citas') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+

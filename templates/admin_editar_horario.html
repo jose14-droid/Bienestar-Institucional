@@ -1,0 +1,95 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Editar Horario - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Horario</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="dia_semana" class="form-label">Día de la Semana <span class="text-danger">*</span></label>
+                        <select class="form-select" id="dia_semana" name="dia_semana" required>
+                            <option value="0" {% if horario.dia_semana == 0 %}selected{% endif %}>Lunes</option>
+                            <option value="1" {% if horario.dia_semana == 1 %}selected{% endif %}>Martes</option>
+                            <option value="2" {% if horario.dia_semana == 2 %}selected{% endif %}>Miércoles</option>
+                            <option value="3" {% if horario.dia_semana == 3 %}selected{% endif %}>Jueves</option>
+                            <option value="4" {% if horario.dia_semana == 4 %}selected{% endif %}>Viernes</option>
+                            <option value="5" {% if horario.dia_semana == 5 %}selected{% endif %}>Sábado</option>
+                            <option value="6" {% if horario.dia_semana == 6 %}selected{% endif %}>Domingo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="hora_inicio" class="form-label">Hora de Inicio <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" 
+                                   value="{{ horario.hora_inicio.strftime('%H:%M') }}" required>
+                            <div class="form-text">Formato: HH:MM (24 horas)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hora_fin" class="form-label">Hora de Fin <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" id="hora_fin" name="hora_fin" 
+                                   value="{{ horario.hora_fin.strftime('%H:%M') }}" required>
+                            <div class="form-text">Formato: HH:MM (24 horas)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="activo" name="activo" {% if horario.activo %}checked{% endif %}>
+                            <label class="form-check-label" for="activo">
+                                Horario Activo
+                            </label>
+                        </div>
+                        <div class="form-text">Los horarios inactivos no se mostrarán a los usuarios</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('admin.horarios') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Actualizar Horario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const horaInicio = document.getElementById('hora_inicio');
+    const horaFin = document.getElementById('hora_fin');
+    
+    // Validar que la hora de fin sea mayor que la de inicio
+    function validarHoras() {
+        if (horaInicio.value && horaFin.value) {
+            if (horaFin.value <= horaInicio.value) {
+                horaFin.setCustomValidity('La hora de fin debe ser mayor que la hora de inicio');
+            } else {
+                horaFin.setCustomValidity('');
+            }
+        }
+    }
+    
+    horaInicio.addEventListener('change', validarHoras);
+    horaFin.addEventListener('change', validarHoras);
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

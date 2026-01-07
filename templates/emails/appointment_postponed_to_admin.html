@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitud de Posposición de Cita</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #ffc107;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .info-box {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+            margin-left: 10px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📅 Solicitud de Posposición de Cita</h1>
+    </div>
+    <div class="content">
+        <p>Estimado/a Administrador/a,</p>
+        
+        <p>Se ha recibido una solicitud de posposición de cita:</p>
+        
+        <div class="info-box">
+            <div><span class="info-label">Usuario:</span><span class="info-value">{{ usuario.nombre_completo or usuario.username }}</span></div>
+            <div><span class="info-label">Cédula:</span><span class="info-value">{{ usuario.cedula or 'No registrada' }}</span></div>
+            <div><span class="info-label">Email:</span><span class="info-value">{{ usuario.email or 'No registrado' }}</span></div>
+        </div>
+        
+        <div class="info-box">
+            <div><span class="info-label">Cita Original:</span></div>
+            <div><span class="info-value">Fecha: {{ cita.fecha.strftime('%d/%m/%Y') }} - Hora: {{ cita.hora.strftime('%H:%M') }}</span></div>
+            <div><span class="info-value">Motivo: {{ cita.motivo }}</span></div>
+        </div>
+        
+        <div class="warning-box">
+            <div><span class="info-label">Nueva Fecha Propuesta:</span></div>
+            <div><span class="info-value"><strong>{{ cita.fecha_pospuesta.strftime('%d/%m/%Y') }} a las {{ cita.hora_pospuesta.strftime('%H:%M') }}</strong></span></div>
+        </div>
+        
+        <div class="info-box">
+            <div><span class="info-label">Motivo de la Posposición:</span></div>
+            <div style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 4px;">
+                {{ cita.motivo_posposicion }}
+            </div>
+        </div>
+        
+        {% if cita.get_archivos_posposicion() %}
+        <div class="info-box">
+            <div><span class="info-label">Documento Adjunto:</span></div>
+            <div style="margin-top: 10px;">
+                {% for archivo in cita.get_archivos_posposicion() %}
+                    <div>📎 {{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <p style="margin-top: 20px;">
+            <strong>Por favor, revise esta solicitud en el panel de administración.</strong>
+        </p>
+    </div>
+    <div class="footer">
+        <p>Este es un mensaje automático del Sistema de Coordinación de Bienestar Institucional.</p>
+        <p>Por favor, no responda a este correo.</p>
+    </div>
+</body>
+</html>
+
+
+

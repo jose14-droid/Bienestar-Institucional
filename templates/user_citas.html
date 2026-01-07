@@ -1,0 +1,127 @@
+{% if session.rol == 'docente' %}
+{% extends "docente_base.html" %}
+{% block title %}Mis Citas - Coordinación de Bienestar Institucional{% endblock %}
+{% block docente_content %}
+{% elif session.rol in ['admin', 'administrador'] %}
+{% extends "admin_base.html" %}
+{% block title %}Mis Citas - Coordinación de Bienestar Institucional{% endblock %}
+{% block admin_content %}
+{% else %}
+{% extends "user_base.html" %}
+{% block title %}Mis Citas - Coordinación de Bienestar Institucional{% endblock %}
+{% block user_content %}
+{% endif %}
+<div class="mb-4">
+    <h2 class="mb-2"><i class="fas fa-calendar-check me-2"></i>MIS CITAS</h2>
+    <div class="border-bottom border-success border-3 mb-3" style="width: 100px;"></div>
+    <p class="text-muted">Aquí puedes ver y gestionar todas tus citas programadas.</p>
+</div>
+
+<div class="d-flex justify-content-end mb-4">
+    <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nueva Cita
+    </a>
+</div>
+    
+    {% if citas %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Motivo</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                        <th>Observaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    <tr>
+                        <td>
+                            <strong>{{ cita.motivo }}</strong>
+                            <br>
+                            <small class="text-muted">Creada: {{ cita.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</small>
+                        </td>
+                        <td>
+                            <i class="fas fa-calendar text-primary me-2"></i>
+                            {{ cita.fecha.strftime('%d/%m/%Y') }}
+                            <br>
+                            <small class="text-muted">{{ cita.fecha.strftime('%A') }}</small>
+                        </td>
+                        <td>
+                            <i class="fas fa-clock text-success me-2"></i>
+                            <strong>{{ cita.hora.strftime('%H:%M') }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ 'warning' if cita.estado == 'pendiente' else 'success' if cita.estado == 'confirmada' else 'danger' }}">
+                                {{ cita.estado.title() }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if cita.observaciones %}
+                                <small class="text-muted">{{ cita.observaciones }}</small>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                            {% if cita.esta_pospuesta() %}
+                                <br><br>
+                                <div class="alert alert-warning mb-0 p-2">
+                                    <strong><i class="fas fa-calendar-alt me-1"></i>Pospuesta:</strong><br>
+                                    <small>Nueva fecha: {{ cita.fecha_pospuesta.strftime('%d/%m/%Y') }} a las {{ cita.hora_pospuesta.strftime('%H:%M') }}</small><br>
+                                    <small><strong>Motivo:</strong> {{ cita.motivo_posposicion }}</small>
+                                    {% if cita.get_archivos_posposicion() %}
+                                        <br><small>
+                                            <strong>Archivos:</strong>
+                                            {% for archivo in cita.get_archivos_posposicion() %}
+                                                <a href="{{ url_for('descargar_archivo_posposicion', cita_id=cita.id, filename=archivo) }}" class="text-primary">
+                                                    <i class="fas fa-file me-1"></i>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}
+                                                </a>
+                                            {% endfor %}
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if cita.estado == 'pendiente' or cita.estado == 'confirmada' %}
+                            <a href="{{ url_for('cita.reagendar_cita', cita_id=cita.id) }}" class="btn btn-primary btn-sm" title="Reagendar Cita">
+                                <i class="fas fa-calendar-check me-1"></i>Reagendar
+                            </a>
+                            {% elif cita.estado == 'confirmada' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>Confirmada
+                                </span>
+                            {% elif cita.estado == 'cancelada' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle me-1"></i>Cancelada
+                                </span>
+                            {% elif cita.estado == 'pospuesta' %}
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-calendar-alt me-1"></i>Pospuesta
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-calendar-times text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No tienes citas programadas</h4>
+                        <p class="text-muted">Agenda tu primera cita con el personal de bienestar estudiantil</p>
+                        <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

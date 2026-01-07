@@ -1,0 +1,105 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Gestión de Eventos - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-alt me-2"></i>Gestión de Eventos</h2>
+    <a href="{{ url_for('admin.nuevo_evento') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nuevo Evento
+    </a>
+</div>
+
+<div class="container-fluid px-0">
+    {% if eventos %}
+        <div class="row">
+            {% for evento in eventos %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="badge bg-{{ 'primary' if evento.tipo == 'academico' else 'success' if evento.tipo == 'cultural' else 'warning' if evento.tipo == 'deportivo' else 'info' }}">
+                            {{ evento.tipo.title() }}
+                        </span>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Editar</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>Ver Detalles</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i>Eliminar</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ evento.titulo }}</h5>
+                        <p class="card-text">{{ evento.descripcion[:100] }}{% if evento.descripcion|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="mb-2">
+                            <i class="fas fa-calendar text-primary me-2"></i>
+                            <strong>Inicio:</strong> {{ evento.fecha_inicio.strftime('%d/%m/%Y %H:%M') }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-calendar text-success me-2"></i>
+                            <strong>Fin:</strong> {{ evento.fecha_fin.strftime('%d/%m/%Y %H:%M') }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-map-marker-alt text-warning me-2"></i>
+                            <strong>Lugar:</strong> {{ evento.lugar }}
+                        </div>
+                        {% if evento.capacidad_maxima %}
+                        <div class="mb-2">
+                            <i class="fas fa-users text-info me-2"></i>
+                            <strong>Capacidad:</strong> {{ evento.capacidad_maxima }} personas
+                        </div>
+                        {% endif %}
+                        <div class="mb-2">
+                            <i class="fas fa-{{ 'check' if evento.inscripciones_abiertas else 'times' }} text-{{ 'success' if evento.inscripciones_abiertas else 'danger' }} me-2"></i>
+                            <strong>Inscripciones:</strong> {{ 'Abiertas' if evento.inscripciones_abiertas else 'Cerradas' }}
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-{{ 'check' if evento.activo else 'times' }} text-{{ 'success' if evento.activo else 'danger' }} me-2"></i>
+                            <strong>Estado:</strong> {{ 'Activo' if evento.activo else 'Inactivo' }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                Creado: {{ evento.fecha_creacion.strftime('%d/%m/%Y') }}
+                            </small>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-outline-{{ 'success' if evento.activo else 'secondary' }}" title="{{ 'Desactivar' if evento.activo else 'Activar' }}">
+                                    <i class="fas fa-{{ 'eye-slash' if evento.activo else 'eye' }}"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-calendar-alt text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No hay eventos creados</h4>
+                        <p class="text-muted">Crea el primer evento para comenzar</p>
+                        <a href="{{ url_for('admin.nuevo_evento') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Primer Evento
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

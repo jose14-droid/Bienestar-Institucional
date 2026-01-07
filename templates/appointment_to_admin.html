@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Cita Agendada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .info-box {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+            margin-left: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📅 Nueva Cita Agendada</h1>
+    </div>
+    <div class="content">
+        <p>Estimado/a <strong>{{ admin.nombre_completo or admin.username }}</strong>,</p>
+        
+        <p>Se ha agendado una nueva cita en el sistema:</p>
+        
+        <div class="info-box">
+            <p><span class="info-label">Usuario:</span><span class="info-value">{{ usuario.nombre_completo or usuario.username }}</span></p>
+            <p><span class="info-label">Cédula:</span><span class="info-value">{{ usuario.cedula or 'No registrada' }}</span></p>
+            {% if usuario.carrera_id %}
+                {% set carrera_usuario = Carrera.query.get(usuario.carrera_id) %}
+                {% if carrera_usuario %}
+                <p><span class="info-label">Carrera:</span><span class="info-value">{{ carrera_usuario.nombre }}</span></p>
+                {% endif %}
+            {% endif %}
+            {% if usuario.semestre %}
+            <p><span class="info-label">Semestre:</span><span class="info-value">{{ usuario.semestre }}° Semestre</span></p>
+            {% endif %}
+            <p><span class="info-label">Email:</span><span class="info-value">{{ usuario.email or 'No registrado' }}</span></p>
+        </div>
+        
+        <div class="info-box">
+            <p><span class="info-label">Motivo:</span><span class="info-value">{{ cita.motivo }}</span></p>
+            <p><span class="info-label">Fecha:</span><span class="info-value">{{ cita.fecha.strftime('%d/%m/%Y') }}</span></p>
+            <p><span class="info-label">Hora:</span><span class="info-value">{{ cita.hora.strftime('%H:%M') }}</span></p>
+            {% if cita.observaciones %}
+            <p><span class="info-label">Observaciones:</span><span class="info-value">{{ cita.observaciones }}</span></p>
+            {% endif %}
+        </div>
+        
+        <p>Por favor, revise la cita en el panel de administración.</p>
+    </div>
+    <div class="footer">
+        <p>Este es un mensaje automático del sistema de Coordinación de Bienestar Institucional.</p>
+        <p>Por favor, no responda a este correo.</p>
+    </div>
+</body>
+</html>
+

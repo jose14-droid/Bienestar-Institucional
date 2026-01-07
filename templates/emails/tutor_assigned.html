@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Estudiante Asignado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .student-details {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info-box {
+            background: #d1ecf1;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #17a2b8;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 Nuevo Estudiante Asignado</h1>
+        <p>Coordinación de Bienestar Institucional</p>
+    </div>
+    
+    <div class="content">
+        <h2>¡Hola {{ tutor.nombre_completo or tutor.username }}!</h2>
+        <p>Se te ha asignado un nuevo estudiante como tutor. A partir de ahora recibirás informes y notificaciones sobre este estudiante.</p>
+        
+        <div class="student-details">
+            <h3>👤 Información del Estudiante</h3>
+            <div class="detail-row">
+                <span class="detail-label">Nombre Completo:</span>
+                <span><strong>{{ estudiante.nombre_completo or estudiante.username }}</strong></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Usuario:</span>
+                <span>{{ estudiante.username }}</span>
+            </div>
+            {% if estudiante.cedula %}
+            <div class="detail-row">
+                <span class="detail-label">Cédula:</span>
+                <span>{{ estudiante.cedula }}</span>
+            </div>
+            {% endif %}
+            {% if estudiante.email %}
+            <div class="detail-row">
+                <span class="detail-label">Email:</span>
+                <span>{{ estudiante.email }}</span>
+            </div>
+            {% endif %}
+            {% if estudiante.telefono %}
+            <div class="detail-row">
+                <span class="detail-label">Teléfono:</span>
+                <span>{{ estudiante.telefono }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="info-box">
+            <h4>📋 ¿Qué significa esto?</h4>
+            <ul>
+                <li>Recibirás <strong>informes y reportes</strong> sobre este estudiante</li>
+                <li>Se te notificará sobre las <strong>citas y procesos</strong> relacionados con este estudiante</li>
+                <li>Podrás ver y gestionar la información de este estudiante desde tu panel docente</li>
+            </ul>
+        </div>
+        
+        <p style="background: #d1ecf1; padding: 15px; border-radius: 5px; border-left: 4px solid #17a2b8;">
+            <strong>ℹ️ Nota:</strong> Esta es una notificación automática enviada al correo registrado en tu perfil: <strong>{{ tutor.email }}</strong>
+        </p>
+        
+        <div style="text-align: center;">
+            <a href="#" class="btn">Ver Mis Estudiantes</a>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Coordinación de Bienestar Institucional</strong></p>
+            <p>Instituto Superior Tecnológico TENA</p>
+            <p>📧 bienestar@instituto.edu | 📞 (06) 288-1234</p>
+            <p>📍 Tena, Ecuador</p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

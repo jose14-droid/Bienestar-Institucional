@@ -1,0 +1,180 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Nuevo Informe - Panel Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>Crear Nuevo Informe</h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if cita %}
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading"><i class="fas fa-calendar-check me-2"></i>Informe basado en Cita</h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Estudiante:</strong> {{ cita.usuario.nombre_completo or cita.usuario.username }}</p>
+                                <p class="mb-2"><strong>Fecha de la Cita:</strong> {{ cita.fecha.strftime('%d/%m/%Y') }}</p>
+                                <p class="mb-2"><strong>Hora:</strong> {{ cita.hora.strftime('%H:%M') }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Motivo:</strong> {{ cita.motivo }}</p>
+                                <p class="mb-2"><strong>Estado:</strong> 
+                                    <span class="badge bg-{{ 'warning' if cita.estado == 'pendiente' else 'success' if cita.estado == 'confirmada' else 'danger' }}">
+                                        {{ cita.estado.title() }}
+                                    </span>
+                                </p>
+                                {% if cita.observaciones %}
+                                <p class="mb-2"><strong>Observaciones de la Cita:</strong> {{ cita.observaciones }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% if cita %}
+                        <input type="hidden" name="cita_id" value="{{ cita.id }}">
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título del Informe <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required 
+                                   value="{% if cita %}Reporte de Cita - {{ cita.motivo }}{% else %}Ej: Reporte de Sesión - Apoyo Psicológico{% endif %}"
+                                   placeholder="Ej: Reporte de Sesión - Apoyo Psicológico">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="usuario_id" class="form-label">Usuario <span class="text-danger">*</span></label>
+                                <select class="form-select" id="usuario_id" name="usuario_id" required {% if usuario_seleccionado %}disabled{% endif %}>
+                                    <option value="">Seleccione un usuario</option>
+                                    {% for usuario in usuarios %}
+                                    <option value="{{ usuario.id }}" {% if usuario_seleccionado == usuario.id %}selected{% endif %}>
+                                        {{ usuario.nombre_completo or usuario.username }} - {{ usuario.email or 'Sin email' }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                {% if usuario_seleccionado %}
+                                <input type="hidden" name="usuario_id" value="{{ usuario_seleccionado }}">
+                                <div class="form-text">Usuario seleccionado automáticamente desde la cita</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="docente_id" class="form-label">Docente Destinatario</label>
+                                <select class="form-select" id="docente_id" name="docente_id">
+                                    <option value="">Todos los docentes</option>
+                                    {% for docente in docentes %}
+                                    <option value="{{ docente.id }}">
+                                        {{ docente.nombre_completo or docente.username }}
+                                        {% if docente.curso %} - {{ docente.curso }}{% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">Deje vacío para enviar a todos los docentes</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="tipo_sesion" class="form-label">Tipo de Sesión/Agendamiento</label>
+                            <select class="form-select" id="tipo_sesion" name="tipo_sesion">
+                                <option value="">Seleccione el tipo de sesión</option>
+                                <option value="Apoyo Psicológico">Apoyo Psicológico</option>
+                                <option value="Temas de Beca">Temas de Beca</option>
+                                <option value="Orientación Vocacional">Orientación Vocacional</option>
+                                <option value="Apoyo Académico">Apoyo Académico</option>
+                                <option value="Asesoría Legal">Asesoría Legal</option>
+                                <option value="Bienestar Estudiantil">Bienestar Estudiantil</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div class="form-text">Especifique el tipo de agendamiento o sesión realizada</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contenido" class="form-label">Contenido del Informe <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="contenido" name="contenido" rows="10" required placeholder="Describa los detalles de la sesión, observaciones, recomendaciones, etc.">{% if cita %}INFORMACIÓN DE LA CITA:
+- Fecha: {{ cita.fecha.strftime('%d/%m/%Y') }}
+- Hora: {{ cita.hora.strftime('%H:%M') }}
+- Motivo: {{ cita.motivo }}
+- Estado: {{ cita.estado.title() }}
+{% if cita.observaciones %}
+- Observaciones: {{ cita.observaciones }}
+{% endif %}
+
+DESARROLLO DE LA SESIÓN:
+[Aquí describa el desarrollo de la sesión, observaciones, avances, recomendaciones, etc.]
+
+{% endif %}</textarea>
+                            {% if cita %}
+                            <div class="form-text">Se ha prellenado con información básica de la cita. Complete con los detalles de la sesión.</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones Adicionales</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="4" placeholder="Observaciones adicionales o notas importantes"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="archivos" class="form-label">Archivos Adjuntos</label>
+                            <input type="file" class="form-control" id="archivos" name="archivos" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Puede adjuntar múltiples archivos: PDF, documentos Word (.doc, .docx), imágenes (.jpg, .png, .gif) y archivos de texto (.txt). Tamaño máximo: 16MB por archivo.
+                            </div>
+                            <div id="archivos-seleccionados" class="mt-2"></div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota:</strong> El informe se creará en estado "pendiente". Podrá enviarlo a los docentes desde la lista de informes.
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.informes') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Crear Informe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('archivos').addEventListener('change', function(e) {
+    const archivos = e.target.files;
+    const contenedor = document.getElementById('archivos-seleccionados');
+    
+    if (archivos.length > 0) {
+        let html = '<div class="list-group">';
+        for (let i = 0; i < archivos.length; i++) {
+            const archivo = archivos[i];
+            const tamaño = (archivo.size / 1024 / 1024).toFixed(2); // MB
+            html += `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-file me-2"></i>
+                        <strong>${archivo.name}</strong>
+                        <small class="text-muted ms-2">(${tamaño} MB)</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">${archivo.type || 'Archivo'}</span>
+                </div>
+            `;
+        }
+        html += '</div>';
+        contenedor.innerHTML = html;
+    } else {
+        contenedor.innerHTML = '';
+    }
+});
+</script>
+{% endblock %}
+

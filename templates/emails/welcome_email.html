@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .welcome-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #6f42c1;
+            text-align: center;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .service-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        .service-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #6f42c1;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 ¡Bienvenido!</h1>
+        <p>Coordinación de Bienestar Institucional</p>
+    </div>
+    
+    <div class="content">
+        <div class="welcome-box">
+            <h2>¡Hola {{ usuario.nombre_completo }}!</h2>
+            <p style="font-size: 18px; color: #6f42c1; font-weight: bold;">
+                Te damos la bienvenida al Sistema de Bienestar Institucional
+            </p>
+            <p>Tu cuenta ha sido creada exitosamente. Ahora puedes acceder a todos nuestros servicios.</p>
+        </div>
+        
+        <h3>🚀 ¿Qué puedes hacer ahora?</h3>
+        
+        <div class="services-grid">
+            <div class="service-item">
+                <div class="service-icon">📅</div>
+                <h4>Agendar Citas</h4>
+                <p>Programa citas con nuestros especialistas</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">🎉</div>
+                <h4>Ver Eventos</h4>
+                <p>Participa en eventos y actividades</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">💼</div>
+                <h4>Ofertas Laborales</h4>
+                <p>Encuentra oportunidades de trabajo</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">📰</div>
+                <h4>Noticias</h4>
+                <p>Mantente informado de las novedades</p>
+            </div>
+        </div>
+        
+        <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h4>🔐 Información de tu Cuenta:</h4>
+            <ul>
+                <li><strong>Usuario:</strong> {{ usuario.username }}</li>
+                <li><strong>Email:</strong> {{ usuario.email }}</li>
+                <li><strong>Cédula:</strong> {{ usuario.cedula }}</li>
+                <li><strong>Fecha de Registro:</strong> {{ usuario.fecha_registro.strftime('%d/%m/%Y') }}</li>
+            </ul>
+        </div>
+        
+        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h4>⚠️ Importante:</h4>
+            <p>Por seguridad, te recomendamos cambiar tu contraseña en tu primer inicio de sesión.</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="#" class="btn">Iniciar Sesión</a>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Coordinación de Bienestar Institucional</strong></p>
+            <p>Instituto Superior Tecnológico TENA</p>
+            <p>📧 bienestar@instituto.edu | 📞 (06) 288-1234</p>
+            <p>📍 Tena, Ecuador</p>
+            <p style="margin-top: 15px; font-size: 12px;">
+                Si no creaste esta cuenta, por favor contacta con nosotros inmediatamente.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

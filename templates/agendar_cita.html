@@ -1,0 +1,149 @@
+{% extends "docente_base.html" %}
+
+{% block title %}Agendar Cita - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block docente_content %}
+<div class="container py-4">
+    <div class="mb-4">
+        <h2 class="mb-2 d-flex align-items-center" style="color: #007bff; font-size: 1.8rem;">
+            <span class="bg-warning me-2" style="width: 4px; height: 35px; display: inline-block; border-radius: 2px;"></span>
+            Formulario de Cita
+        </h2>
+        <p class="text-muted mb-4">Programa una nueva cita con nuestros especialistas en bienestar estudiantil.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                <div class="card-body p-5">
+                    <form method="POST" enctype="multipart/form-data" id="formAgendarCita">
+                        <!-- Motivo de Consulta -->
+                        <div class="mb-4">
+                            <label for="motivo" class="form-label fw-bold mb-2" style="font-size: 1.1rem; color: #333;">
+                                Tipo de Consulta <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select form-select-lg" id="motivo" name="motivo" required style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px;">
+                                <option value="">Seleccione el tipo de consulta</option>
+                                <option value="Apoyo Psicológico">Apoyo Psicológico</option>
+                                <option value="Información de Becas">Información de Becas</option>
+                                <option value="Seguimiento Académico">Seguimiento Académico</option>
+                                <option value="Orientación Vocacional">Orientación Vocacional</option>
+                            </select>
+                            <div class="form-text">Seleccione el motivo principal de su consulta</div>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="mb-4">
+                            <label for="fecha" class="form-label fw-bold mb-2" style="font-size: 1.1rem; color: #333;">
+                                Fecha <span class="text-danger">*</span>
+                            </label>
+                            {% if date and timedelta %}
+                            <input type="date" class="form-control form-control-lg" id="fecha" name="fecha" required 
+                                   style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px;"
+                                   min="{{ (date.today() + timedelta(days=1)).strftime('%Y-%m-%d') }}">
+                            {% else %}
+                            <input type="date" class="form-control form-control-lg" id="fecha" name="fecha" required 
+                                   style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px;">
+                            {% endif %}
+                            <div class="form-text">Seleccione una fecha futura para su cita</div>
+                        </div>
+
+                        <!-- Hora -->
+                        <div class="mb-4">
+                            <label for="hora" class="form-label fw-bold mb-2" style="font-size: 1.1rem; color: #333;">
+                                Hora <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" class="form-control form-control-lg" id="hora" name="hora" required 
+                                   style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px;">
+                            <div class="form-text">Seleccione la hora deseada para su cita</div>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="mb-4">
+                            <label for="observaciones" class="form-label fw-bold mb-2" style="font-size: 1.1rem; color: #333;">
+                                Observaciones o Motivo Detallado
+                            </label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="4" 
+                                      style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px;"
+                                      placeholder="Describa brevemente el motivo de su consulta o cualquier información adicional que considere relevante..."></textarea>
+                            <div class="form-text">Opcional: Proporcione detalles adicionales sobre su consulta</div>
+                        </div>
+
+                        <!-- Documento Adjunto -->
+                        <div class="mb-4">
+                            <label for="documento" class="form-label fw-bold mb-2" style="font-size: 1.1rem; color: #333;">
+                                Documento Adjunto (Opcional)
+                            </label>
+                            <input type="file" class="form-control form-control-lg" id="documento" name="documento" 
+                                   accept=".pdf" 
+                                   style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px;">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle text-info me-1"></i>
+                                Solo se permiten archivos PDF. Tamaño máximo: 16MB
+                            </div>
+                        </div>
+
+                        <!-- Mensaje Informativo -->
+                        <div class="alert alert-info mb-4" style="border-left: 4px solid #0dcaf0; background-color: #e7f3ff;">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Importante:</strong> Su solicitud será revisada por el administrador. Recibirá una confirmación por correo electrónico una vez que su cita sea aprobada.
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ url_for('user.dashboard') }}" 
+                               class="btn btn-secondary btn-lg me-md-2" style="padding: 12px 30px; border-radius: 8px;">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg" style="padding: 12px 30px; border-radius: 8px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); border: none;">
+                                <i class="fas fa-calendar-check me-2"></i>Agendar Cita
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validar que la fecha sea futura
+    const fechaInput = document.getElementById('fecha');
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    
+    fechaInput.addEventListener('change', function() {
+        const fechaSeleccionada = new Date(this.value);
+        fechaSeleccionada.setHours(0, 0, 0, 0);
+        
+        if (fechaSeleccionada <= hoy) {
+            alert('Por favor seleccione una fecha futura');
+            this.value = '';
+        }
+    });
+
+    // Validar archivo PDF
+    const documento = document.getElementById('documento');
+    if (documento) {
+        documento.addEventListener('change', function(e) {
+            const file = documento.files[0];
+            if (file) {
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    e.preventDefault();
+                    alert('Solo se permiten archivos PDF');
+                    documento.value = '';
+                    return false;
+                }
+                if (file.size > 16 * 1024 * 1024) {
+                    e.preventDefault();
+                    alert('El archivo es demasiado grande. El tamaño máximo es 16MB');
+                    documento.value = '';
+                    return false;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

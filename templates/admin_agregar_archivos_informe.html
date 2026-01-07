@@ -1,0 +1,120 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Agregar Archivos al Reporte - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-paperclip me-2"></i>Agregar Archivos al Reporte</h4>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Información del Reporte -->
+                <div class="card mb-4 border-info">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información del Reporte</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Título:</strong> {{ informe.titulo }}</p>
+                                <p><strong>Estudiante:</strong> {{ informe.usuario.nombre_completo or informe.usuario.username }}</p>
+                                <p><strong>Docente Remitente:</strong> 
+                                    {% if informe.docente_remitente %}
+                                        {{ informe.docente_remitente.nombre_completo or informe.docente_remitente.username }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Fecha de Creación:</strong> {{ informe.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p><strong>Estado:</strong> 
+                                    <span class="badge bg-{{ 'success' if informe.estado == 'enviado' else 'warning' }}">
+                                        {{ informe.estado.title() }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archivos Actuales del Admin -->
+                {% if archivos_actuales %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-folder-open me-2"></i>Archivos Añadidos por el Admin</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for archivo in archivos_actuales %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-file me-2"></i>
+                                    <strong>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}</strong>
+                                </div>
+                                <a href="{{ url_for('admin.descargar_archivo_adjunto', informe_id=informe.id, filename=archivo) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i>Descargar
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Formulario para Agregar Archivos -->
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="archivos" class="form-label">Agregar Archivos (Fotografías y Documentos PDF) <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="archivos" name="archivos" multiple required
+                               accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx">
+                        <div class="form-text">
+                            Puede agregar múltiples archivos. Formatos permitidos: PDF, imágenes (JPG, PNG, GIF) o documentos (DOC, DOCX).
+                            Máximo 16MB por archivo.
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Importante:</strong> Los archivos que agregue aquí serán visibles tanto para usted como para el docente que envió el reporte.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('admin.informes') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Agregar Archivos
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

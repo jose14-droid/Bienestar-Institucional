@@ -1,0 +1,108 @@
+{% extends "user_base.html" %}
+
+{% block title %}Horarios de Atención - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block user_content %}
+<div class="mb-4">
+    <h2 class="mb-2"><i class="fas fa-clock me-2"></i>HORARIOS</h2>
+    <div class="border-bottom border-success border-3 mb-3" style="width: 100px;"></div>
+    <p class="text-muted">Consulta los horarios disponibles para agendar tu cita.</p>
+</div>
+    
+    {% if horarios %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Horarios Disponibles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Día</th>
+                                        <th>Horario de Inicio</th>
+                                        <th>Horario de Fin</th>
+                                        <th>Duración</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for horario in horarios %}
+                                    <tr>
+                                        <td>
+                                            {% if horario.dia_semana == 0 %}
+                                                <span class="badge bg-primary">Lunes</span>
+                                            {% elif horario.dia_semana == 1 %}
+                                                <span class="badge bg-success">Martes</span>
+                                            {% elif horario.dia_semana == 2 %}
+                                                <span class="badge bg-warning">Miércoles</span>
+                                            {% elif horario.dia_semana == 3 %}
+                                                <span class="badge bg-info">Jueves</span>
+                                            {% elif horario.dia_semana == 4 %}
+                                                <span class="badge bg-danger">Viernes</span>
+                                            {% elif horario.dia_semana == 5 %}
+                                                <span class="badge bg-secondary">Sábado</span>
+                                            {% else %}
+                                                <span class="badge bg-dark">Domingo</span>
+                                            {% endif %}
+                                        </td>
+                                        <td><strong>{{ horario.hora_inicio.strftime('%H:%M') }}</strong></td>
+                                        <td><strong>{{ horario.hora_fin.strftime('%H:%M') }}</strong></td>
+                                        <td>
+                                            {% set inicio = horario.hora_inicio %}
+                                            {% set fin = horario.hora_fin %}
+                                            {% set diff = ((fin.hour * 60 + fin.minute) - (inicio.hour * 60 + inicio.minute)) %}
+                                            <span class="text-muted">{{ (diff // 60) }}h {{ (diff % 60) }}m</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información Importante</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota:</strong> Los horarios pueden variar según disponibilidad del personal.
+                        </div>
+                        
+                        <h6 class="fw-bold">Requisitos para Agendar:</h6>
+                        <ul class="list-unstyled mb-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Estar registrado en el sistema</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Agendar con 24 horas de anticipación</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Presentar cédula de identidad</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Llegar 10 minutos antes de la cita</li>
+                        </ul>
+                        
+                        <div class="d-grid mt-3">
+                            <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-primary">
+                                <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm border-0">
+                    <div class="card-body py-5">
+                        <i class="fas fa-clock text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No hay horarios configurados</h4>
+                        <p class="text-muted">Contacta con la administración para más información</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

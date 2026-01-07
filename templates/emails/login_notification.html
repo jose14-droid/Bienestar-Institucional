@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación de Inicio de Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 Inicio de Sesión Detectado</h1>
+        <p>Coordinación de Bienestar Institucional</p>
+    </div>
+    
+    <div class="content">
+        <h2>¡Hola {{ usuario.nombre_completo or usuario.username }}!</h2>
+        <p><strong>Has iniciado sesión con tu cuenta en el sistema de Coordinación de Bienestar Institucional.</strong></p>
+        
+        <div class="info-box">
+            <h3>📋 Información del Inicio de Sesión:</h3>
+            <div class="detail-row">
+                <span class="detail-label">Usuario:</span>
+                <span>{{ usuario.username }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Rol:</span>
+                <span>{{ usuario.rol.title() }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Fecha y Hora:</span>
+                <span>{{ fecha_hora.strftime('%d/%m/%Y %H:%M:%S') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email de la cuenta:</span>
+                <span>{{ usuario.email }}</span>
+            </div>
+        </div>
+        
+        <div class="warning-box">
+            <h4>⚠️ ¿No fuiste tú?</h4>
+            <p>Si no iniciaste sesión en tu cuenta, por favor:</p>
+            <ul style="text-align: left; margin: 10px 0;">
+                <li>Cambia tu contraseña inmediatamente</li>
+                <li>Contacta al administrador del sistema</li>
+                <li>Revisa la seguridad de tu cuenta</li>
+            </ul>
+        </div>
+        
+        <p><strong>🔒 Recomendaciones de Seguridad:</strong></p>
+        <ul style="text-align: left;">
+            <li>No compartas tu contraseña con nadie</li>
+            <li>Usa una contraseña segura y única</li>
+            <li>Cierra sesión cuando termines de usar el sistema</li>
+            <li>Revisa regularmente la actividad de tu cuenta</li>
+        </ul>
+        
+        <p style="background: #d1ecf1; padding: 15px; border-radius: 5px; border-left: 4px solid #17a2b8;">
+            <strong>ℹ️ Nota:</strong> Esta es una notificación automática de seguridad enviada al correo registrado en tu perfil: <strong>{{ usuario.email }}</strong>
+        </p>
+        
+        <div class="footer">
+            <p><strong>Coordinación de Bienestar Institucional</strong></p>
+            <p>Instituto Superior Tecnológico TENA</p>
+            <p>📧 bienestar@instituto.edu | 📞 (06) 288-1234</p>
+            <p>📍 Tena, Ecuador</p>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,2541 @@
+/* ===== ESTILOS RESPONSIVOS PARA SISTEMA DE BIENESTAR INSTITUCIONAL ===== */
+
+/* Variables CSS para consistencia */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+/* Reset y configuración base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* ===== NAVEGACIÓN RESPONSIVA ===== */
+.navbar {
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+    transition: var(--transition);
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: var(--border-radius);
+}
+
+/* Dropdown responsivo */
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+}
+
+/* ===== HERO SECTION RESPONSIVA ===== */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== CARDS RESPONSIVAS ===== */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+}
+
+/* ===== BOTONES RESPONSIVOS ===== */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+    border: none;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* ===== FORMULARIOS RESPONSIVOS ===== */
+.form-control, .form-select {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+    font-size: 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.input-group-text {
+    background-color: var(--primary-color);
+    color: white;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+/* ===== TABLAS RESPONSIVAS ===== */
+.table-responsive {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+
+/* ===== BADGES Y ALERTAS ===== */
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius);
+}
+
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* ===== FOOTER RESPONSIVO ===== */
+footer {
+    background: linear-gradient(135deg, #0056b3, #009dff);
+    color: white;
+    margin-top: auto;
+    padding: 2rem 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+footer h5 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+}
+
+footer i {
+    color: #ffcc00;
+    margin-right: 0.5rem;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0; 
+        transform: translateX(-30px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Dispositivos móviles pequeños (hasta 576px) - Celulares Android */
+@media (max-width: 575.98px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+    
+    .container-fluid {
+        padding: 0 0.5rem;
+    }
+    
+    .hero-section {
+        min-height: 50vh;
+        padding: 1.5rem 0;
+    }
+    
+    .display-4 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+    
+    .display-5 {
+        font-size: 1.4rem;
+    }
+    
+    .display-6 {
+        font-size: 1.2rem;
+    }
+    
+    .btn-lg {
+        font-size: 1rem;
+        padding: 0.75rem 1.25rem;
+        min-height: 44px; /* Tamaño táctil mínimo */
+    }
+    
+    .btn {
+        min-height: 44px; /* Tamaño táctil mínimo para Android */
+        padding: 0.625rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1rem 0.75rem;
+    }
+    
+    .card-header {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    /* Grid de tarjetas en móvil - una columna */
+    .row .col-md-3,
+    .row .col-md-4,
+    .row .col-md-6 {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Tarjetas de estadísticas en móvil */
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning,
+    .card.bg-info,
+    .card.bg-danger {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body,
+    .card.bg-danger .card-body {
+        padding: 1rem;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4,
+    .card.bg-danger h4 {
+        font-size: 1.5rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+        border-radius: 8px;
+        margin: 0 -0.5rem;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 0.9rem;
+        padding: 0.25rem 0;
+    }
+    
+    .navbar-brand img {
+        max-width: 32px;
+        height: auto;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.875rem 1rem;
+        text-align: left;
+        font-size: 0.95rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .dropdown-menu {
+        width: 100%;
+        max-width: 100%;
+        margin-top: 0.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    
+    .dropdown-item {
+        padding: 0.875rem 1rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+        border-radius: var(--border-radius) !important;
+        width: 100%;
+    }
+    
+    /* Formularios en móvil */
+    .form-control,
+    .form-select {
+        font-size: 16px; /* Previene zoom automático en iOS/Android */
+        padding: 0.75rem;
+        min-height: 44px;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    /* Modales en móvil */
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+    
+    .modal-content {
+        border-radius: 12px;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Footer en móvil */
+    footer {
+        padding: 1.5rem 0;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    
+    footer h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    footer p {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Alertas en móvil */
+    .alert {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+    
+    /* Badges en móvil */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    /* Espaciado general */
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .p-4 {
+        padding: 1rem !important;
+    }
+    
+    .px-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .py-4 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+}
+
+/* Dispositivos móviles medianos (576px - 767px) - Celulares grandes Android */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .hero-section {
+        min-height: 55vh;
+        padding: 2rem 0;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .display-5 {
+        font-size: 1.6rem;
+    }
+    
+    /* Grid de 2 columnas para tarjetas en móviles grandes */
+    .row .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .row .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .card-columns {
+        column-count: 2;
+        column-gap: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.625rem 0.5rem;
+    }
+    
+    .btn {
+        min-height: 44px;
+        padding: 0.625rem 1.125rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        min-height: 44px;
+    }
+}
+
+/* Tablets Android (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .container {
+        max-width: 100%;
+        padding: 0 1.5rem;
+    }
+    
+    .hero-section {
+        min-height: 60vh;
+        padding: 2.5rem 0;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    /* Grid de 3 columnas para tarjetas en tablets */
+    .row .col-md-3 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    
+    .row .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .card-columns {
+        column-count: 3;
+        column-gap: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.75rem 0.625rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.95rem;
+    }
+    
+    /* Sidebar en tablets - puede ser más compacto */
+    .sidebar {
+        padding: 1.5rem 1rem;
+    }
+    
+    .sidebar-link {
+        padding: 0.6rem 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .content-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Dispositivos de escritorio pequeños (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .hero-section {
+        min-height: 65vh;
+    }
+    
+    .display-4 {
+        font-size: 2.8rem;
+    }
+    
+    .card-columns {
+        column-count: 3;
+    }
+}
+
+/* Dispositivos de escritorio grandes (1200px+) */
+@media (min-width: 1200px) {
+    .hero-section {
+        min-height: 70vh;
+    }
+    
+    .display-4 {
+        font-size: 3rem;
+    }
+    
+    .container {
+        max-width: 1200px;
+    }
+}
+
+/* ===== MEJORAS ESPECÍFICAS PARA MÓVILES Y TABLETS ===== */
+@media (max-width: 767.98px) {
+    /* Navegación móvil mejorada */
+    .navbar-toggler {
+        border: none;
+        padding: 0.5rem;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+    
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        outline: none;
+    }
+    
+    .navbar-toggler-icon {
+        width: 1.5em;
+        height: 1.5em;
+    }
+    
+    /* Sidebar en móvil - debe ser un menú desplegable */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        z-index: 1050;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    /* Overlay para cerrar sidebar en móvil */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+    
+    /* Main content en móvil cuando sidebar está abierto */
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    /* Botón para abrir sidebar en móvil */
+    .sidebar-toggle {
+        position: fixed;
+        top: 70px;
+        left: 10px;
+        z-index: 1060;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    /* Cards en móvil - mejor espaciado */
+    .card {
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Grid de tarjetas - una columna en móvil */
+    .row.g-0 .col-md-3,
+    .row.g-0 .col-md-4,
+    .row.g-0 .col-md-6 {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Botones en móvil - ancho completo para acciones principales */
+    .btn-primary,
+    .btn-success,
+    .btn-danger,
+    .btn-warning {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        border-radius: var(--border-radius) !important;
+    }
+    
+    /* Formularios en móvil - tamaño táctil */
+    .form-control,
+    .form-select {
+        font-size: 16px; /* Previene zoom automático en iOS/Android */
+        padding: 0.75rem;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .input-group-text {
+        border-radius: 8px 8px 0 0;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .input-group .form-control {
+        border-radius: 0 0 8px 8px;
+    }
+    
+    /* Tablas en móvil - scroll horizontal mejorado */
+    .table-responsive {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+        min-width: 600px; /* Ancho mínimo para scroll horizontal */
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.625rem 0.5rem;
+        white-space: nowrap;
+    }
+    
+    /* Modales en móvil - pantalla completa en móviles pequeños */
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .modal-content {
+        border-radius: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Footer en móvil - más compacto */
+    footer {
+        padding: 1.5rem 0;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    
+    footer .row > div {
+        margin-bottom: 1.5rem;
+    }
+    
+    footer h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Alertas en móvil */
+    .alert {
+        padding: 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+    
+    /* Badges y etiquetas */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    /* Espaciado general reducido */
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 2rem !important;
+    }
+    
+    .mt-4 {
+        margin-top: 1.5rem !important;
+    }
+    
+    .p-4 {
+        padding: 1rem !important;
+    }
+    
+    .p-5 {
+        padding: 1.5rem !important;
+    }
+    
+    /* Títulos más pequeños en móvil */
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    h4 {
+        font-size: 1.1rem;
+    }
+    
+    h5 {
+        font-size: 1rem;
+    }
+    
+    /* Listas en móvil */
+    .list-group-item {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ORIENTACIÓN LANDSCAPE EN MÓVILES ===== */
+@media (max-width: 767.98px) and (orientation: landscape) {
+    .hero-section {
+        min-height: 40vh;
+        padding: 1rem 0;
+    }
+    
+    .display-4 {
+        font-size: 1.5rem;
+    }
+    
+    .navbar {
+        padding: 0.25rem 0;
+    }
+}
+
+/* ===== MEJORAS DE ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== MODO OSCURO (FUTURO) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --light-color: #ffffff;
+        --dark-color: #ffffff;
+    }
+}
+
+/* ===== UTILIDADES RESPONSIVAS ===== */
+.d-mobile-none {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .d-mobile-none {
+        display: block;
+    }
+}
+
+.d-desktop-none {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .d-desktop-none {
+        display: none;
+    }
+}
+
+/* ===== LOADING Y ESTADOS ===== */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== MENÚ DESPLEGABLE MEJORADO ===== */
+.dropdown-menu {
+    animation: dropdownFadeIn 0.3s ease-in-out;
+    transform-origin: top;
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.dropdown-item {
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    margin: 2px 8px;
+    padding: 8px 12px !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    transform: translateX(5px);
+}
+
+.dropdown-item i {
+    transition: transform 0.2s ease;
+}
+
+.dropdown-item:hover i {
+    transform: scale(1.1);
+}
+
+.dropdown-divider {
+    margin: 8px 0 !important;
+    border-color: rgba(0,0,0,0.1) !important;
+}
+
+/* Estilo especial para el botón de cerrar sesión */
+.dropdown-item.text-danger:hover {
+    background-color: var(--danger-color) !important;
+    color: white !important;
+}
+
+/* Animación del ícono de usuario */
+.navbar-nav .nav-link i.fa-user-circle {
+    transition: transform 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover i.fa-user-circle {
+    transform: scale(1.1);
+}
+
+/* Animación de la flecha del dropdown */
+.navbar-nav .nav-link i.fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+.navbar-nav .nav-link[aria-expanded="true"] i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* ===== EFECTOS HOVER PARA NAVEGACIÓN ===== */
+.navbar-nav .nav-link {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin: 0 2px;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.navbar-nav .nav-link:hover::before {
+    left: 100%;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Efectos especiales para botones de login y registro */
+.navbar-nav .nav-link[href="/login"],
+.navbar-nav .nav-link[href="/registro"] {
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link[href="/login"]:hover,
+.navbar-nav .nav-link[href="/registro"]:hover {
+    background: #ffd700;
+    border-color: #ffd700;
+    transform: translateY(-3px) scale(1.05);
+    color: #000;
+    font-weight: bold;
+}
+
+/* Efectos para el dropdown de usuario */
+.navbar-nav .nav-link.dropdown-toggle {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.navbar-nav .nav-link.dropdown-toggle:hover {
+    background: #ffd700;
+    border-color: #ffd700;
+    transform: translateY(-2px);
+    color: #000;
+    font-weight: bold;
+}
+
+/* Efectos para el navbar brand */
+.navbar-brand {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.navbar-brand img {
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+    transform: rotate(5deg) scale(1.1);
+}
+
+/* Efectos adicionales para elementos específicos del menú */
+.navbar-nav .nav-link[href="/"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link[href="/programas"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link[href="/servicios"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link[href="/proyectos"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link[href="/eventos"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link[href="/ofertas_laborales"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link[href="/noticias"]:hover {
+    background: #ffd700;
+    border: 1px solid #ffd700;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Efecto de pulso para elementos activos */
+.navbar-nav .nav-link.active {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(0,0,0,0.1) !important;
+        margin-top: 10px;
+    }
+    
+    .dropdown-item {
+        margin: 1px 0;
+        border-radius: 0;
+    }
+    
+    .dropdown-item:hover {
+        transform: none;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin: 2px 0;
+    }
+    
+    .navbar-nav .nav-link:hover {
+        transform: translateX(5px);
+        background-color: #ffd700;
+        color: #000;
+        font-weight: bold;
+    }
+}
+
+/* ======= Barra de herramientas para administradores ======= */
+.admin-toolbar {
+    border: 1px dashed #f0ad4e;
+    background: #fff9e6;
+    color: #8a6d3b;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-toolbar-actions .btn {
+    min-width: 150px;
+}
+
+.admin-toolbar form {
+    margin: 0;
+}
+
+/* ======= Editor guiado para secciones ======= */
+.builder-block .card-header {
+    background: #f5f9ff;
+}
+
+.builder-block textarea {
+    resize: vertical;
+}
+
+.builder-preview {
+    background: #f8f9fa;
+    border: 1px dashed #c5d5ff;
+}
+
+.structured-blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.structured-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 50px rgba(13, 15, 70, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.structured-number {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #9ca3af;
+}
+
+.structured-title {
+    margin-bottom: 0.2rem;
+}
+
+.structured-description {
+    color: #4b5563;
+}
+
+.structured-budget {
+    background: #fff8e1;
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+/* ===== MEJORAS ESPECÍFICAS PARA DASHBOARD EN MÓVILES ===== */
+
+/* Tarjetas de estadísticas del dashboard */
+@media (max-width: 767.98px) {
+    /* Grid de tarjetas - una columna en móvil */
+    .row .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Tarjetas de estadísticas más compactas */
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning,
+    .card.bg-info,
+    .card.bg-danger {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body,
+    .card.bg-danger .card-body {
+        padding: 1rem;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4,
+    .card.bg-danger h4 {
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .card.bg-primary p,
+    .card.bg-success p,
+    .card.bg-warning p,
+    .card.bg-info p,
+    .card.bg-danger p {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+    
+    .card.bg-primary i,
+    .card.bg-success i,
+    .card.bg-warning i,
+    .card.bg-info i,
+    .card.bg-danger i {
+        font-size: 1.75rem !important;
+    }
+    
+    /* Tarjetas de acción rápida */
+    .card.text-decoration-none {
+        margin-bottom: 1rem;
+    }
+    
+    .card.text-decoration-none .card-body {
+        padding: 1.25rem;
+    }
+    
+    .card.text-decoration-none i {
+        font-size: 2rem !important;
+        margin-bottom: 0.75rem;
+    }
+    
+    .card.text-decoration-none .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card.text-decoration-none .card-text {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablets - Grid de 2 columnas para tarjetas */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .row .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .row .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* ===== MEJORAS PARA SIDEBAR EN MÓVILES Y TABLETS ===== */
+@media (max-width: 991.98px) {
+    /* Sidebar oculto por defecto en móvil y tablet */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 280px !important;
+        max-width: 85vw !important;
+        height: 100vh !important;
+        z-index: 1050 !important;
+        transition: left 0.3s ease-in-out !important;
+        box-shadow: 2px 0 15px rgba(0,0,0,0.3) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .sidebar.show {
+        left: 0 !important;
+    }
+    
+    /* Overlay oscuro cuando sidebar está abierto */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 1040;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(2px);
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+    
+    /* Main content ocupa todo el ancho */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Prevenir scroll cuando sidebar está abierto */
+    body.sidebar-open {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+    }
+    
+    /* Botón flotante para abrir sidebar */
+    .sidebar-toggle-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1060;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0,123,255,0.4);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        min-width: 56px;
+        min-height: 56px;
+    }
+    
+    .sidebar-toggle-btn:hover,
+    .sidebar-toggle-btn:active {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0,123,255,0.5);
+        background: #0056b3;
+    }
+    
+    .sidebar-toggle-btn i {
+        font-size: 1.5rem;
+    }
+    
+    /* Botón de cerrar en el sidebar */
+    .sidebar-close-btn {
+        display: flex !important;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        font-size: 1.2rem;
+        min-width: 40px;
+        min-height: 40px;
+    }
+    
+    .sidebar-close-btn:hover,
+    .sidebar-close-btn:active {
+        background: rgba(255,255,255,0.3);
+        transform: rotate(90deg);
+    }
+    
+    /* Ajustes del contenido del sidebar */
+    .sidebar-content {
+        padding: 3rem 1.25rem 2rem 1.25rem;
+    }
+    
+    .sidebar-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 575.98px) {
+    .sidebar {
+        width: 260px !important;
+        max-width: 90vw !important;
+    }
+    
+    .sidebar-toggle-btn {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        left: 15px;
+    }
+    
+    .sidebar-toggle-btn i {
+        font-size: 1.3rem;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .sidebar {
+        width: 300px !important;
+    }
+    
+    .sidebar-toggle-btn {
+        width: 60px;
+        height: 60px;
+        bottom: 25px;
+        left: 25px;
+    }
+    
+    .sidebar-toggle-btn i {
+        font-size: 1.6rem;
+    }
+}
+
+/* Desktop - Ocultar botones y overlay */
+@media (min-width: 992px) {
+    .sidebar-toggle-btn {
+        display: none !important;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
+    }
+    
+    .sidebar-close-btn {
+        display: none !important;
+    }
+    
+    .sidebar {
+        position: sticky !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+    
+    body.sidebar-open {
+        overflow: auto !important;
+        position: static !important;
+    }
+}
+
+/* ===== PREVENIR CONFLICTOS DE Z-INDEX ===== */
+.sidebar {
+    z-index: 1050;
+}
+
+.sidebar-overlay {
+    z-index: 1040;
+}
+
+.sidebar-toggle-btn {
+    z-index: 1060;
+}
+
+.navbar {
+    z-index: 1030;
+}
+
+.modal {
+    z-index: 1070;
+}
+
+/* ===== ASEGURAR QUE EL CONTENIDO NO SE SUPERPONGA ===== */
+@media (max-width: 991.98px) {
+    .main-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Prevenir que el contenido se mueva cuando el sidebar está abierto */
+    body.sidebar-open .main-content {
+        transform: none;
+    }
+}
+
+/* ===== MEJORAS PARA TABLETS ===== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    /* Sidebar más compacto en tablets */
+    .sidebar {
+        width: 240px;
+    }
+    
+    .sidebar-content {
+        padding: 2rem 1rem 1.5rem 1rem;
+    }
+    
+    .sidebar-link {
+        padding: 0.6rem 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .sidebar-title {
+        font-size: 1rem;
+    }
+    
+    /* Main content ajustado */
+    .main-content {
+        padding-left: 0;
+    }
+    
+    .content-body {
+        padding: 1.5rem;
+    }
+}
+
+/* ===== MEJORAS DE TOUCH PARA ANDROID ===== */
+@media (max-width: 1024px) {
+    /* Áreas táctiles más grandes */
+    a, button, .btn, .nav-link, .dropdown-item, .sidebar-link {
+        -webkit-tap-highlight-color: rgba(0,123,255,0.2);
+        touch-action: manipulation;
+    }
+    
+    /* Mejor feedback táctil */
+    .btn:active,
+    .nav-link:active,
+    .dropdown-item:active,
+    .sidebar-link:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    /* Scroll suave */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Prevenir selección accidental de texto */
+    .btn,
+    .nav-link,
+    .dropdown-item,
+    .sidebar-link {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+}
+
+/* ===== MEJORAS ESPECÍFICAS PARA DASHBOARDS ===== */
+
+/* Tarjetas de estadísticas responsivas */
+@media (max-width: 767.98px) {
+    /* Grid de tarjetas - una columna en móvil */
+    .row .col-md-3,
+    .row .col-md-4,
+    .row .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Tarjetas de estadísticas más compactas */
+    .card.bg-primary,
+    .card.bg-success,
+    .card.bg-warning,
+    .card.bg-info,
+    .card.bg-danger {
+        margin-bottom: 0.75rem;
+        border-radius: 12px;
+    }
+    
+    .card.bg-primary .card-body,
+    .card.bg-success .card-body,
+    .card.bg-warning .card-body,
+    .card.bg-info .card-body,
+    .card.bg-danger .card-body {
+        padding: 1rem;
+    }
+    
+    .card.bg-primary h4,
+    .card.bg-success h4,
+    .card.bg-warning h4,
+    .card.bg-info h4,
+    .card.bg-danger h4 {
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .card.bg-primary p,
+    .card.bg-success p,
+    .card.bg-warning p,
+    .card.bg-info p,
+    .card.bg-danger p {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+    
+    .card.bg-primary i,
+    .card.bg-success i,
+    .card.bg-warning i,
+    .card.bg-info i,
+    .card.bg-danger i {
+        font-size: 1.75rem !important;
+    }
+    
+    /* Tarjetas de acción rápida */
+    .card.text-decoration-none {
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .card.text-decoration-none:active {
+        transform: scale(0.98);
+    }
+    
+    .card.text-decoration-none .card-body {
+        padding: 1.25rem;
+    }
+    
+    .card.text-decoration-none i {
+        font-size: 2rem !important;
+        margin-bottom: 0.75rem;
+    }
+    
+    .card.text-decoration-none .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .card.text-decoration-none .card-text {
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+    
+    /* Títulos de sección */
+    h1, .h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2, .h2 {
+        font-size: 1.35rem;
+    }
+    
+    h3, .h3 {
+        font-size: 1.2rem;
+    }
+    
+    h4, .h4 {
+        font-size: 1.1rem;
+    }
+    
+    /* Espaciado reducido */
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .p-4 {
+        padding: 1rem !important;
+    }
+    
+    .p-5 {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Tablets - Grid de 2 columnas para tarjetas */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .row .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .row .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .row .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* ===== MEJORAS PARA TABLAS EN MÓVILES ===== */
+@media (max-width: 767.98px) {
+    .table-responsive {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 0 -0.5rem;
+    }
+    
+    .table {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+    
+    .table thead {
+        display: none;
+    }
+    
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 0.75rem;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody td:last-child {
+        border-bottom: none;
+    }
+    
+    .table tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6c757d;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .table tbody td:last-child {
+        border-top: 2px solid #007bff;
+        padding-top: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    
+    /* Badges en tablas móviles */
+    .table .badge {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+    }
+    
+    /* Botones en tablas móviles */
+    .table .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .table .btn-sm {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+}
+
+/* ===== MEJORAS PARA FORMULARIOS EN MÓVILES ===== */
+@media (max-width: 767.98px) {
+    .form-control,
+    .form-select {
+        font-size: 16px; /* Previene zoom automático en iOS/Android */
+        padding: 0.75rem;
+        min-height: 48px;
+        border-radius: 8px;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Input groups - mantener horizontal en login */
+    .input-group-custom {
+        flex-direction: row !important;
+    }
+    
+    /* Para otros formularios que no sean login */
+    .input-group:not(.input-group-custom) {
+        flex-direction: column;
+    }
+    
+    .input-group-text:not(.input-icon) {
+        border-radius: 8px 8px 0 0;
+        width: 100%;
+        justify-content: center;
+        min-height: 48px;
+    }
+    
+    .input-group:not(.input-group-custom) .form-control {
+        border-radius: 0 0 8px 8px;
+        border-top: none;
+    }
+    
+    .input-group-lg .form-control,
+    .input-group-lg .input-group-text {
+        min-height: 50px;
+        font-size: 16px;
+    }
+    
+    /* Textareas */
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    /* Checkboxes y radios */
+    .form-check {
+        margin-bottom: 0.75rem;
+        padding-left: 2rem;
+    }
+    
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-top: 0.25rem;
+        margin-left: -2rem;
+    }
+    
+    .form-check-label {
+        font-size: 0.95rem;
+        padding-left: 0.5rem;
+    }
+}
+
+/* ===== ESTILOS ESPECÍFICOS PARA LOGIN EN MÓVILES ===== */
+@media (max-width: 767.98px) {
+    /* Asegurar que los input groups del login se vean correctamente */
+    .login-card .input-group-custom {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+    }
+    
+    .login-card .input-icon {
+        flex-shrink: 0;
+    }
+    
+    .login-card .form-control-custom {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .login-card .password-toggle-btn {
+        flex-shrink: 0;
+    }
+    
+    /* Prevenir que los inputs se vean como bloques sólidos */
+    .login-card .form-control-custom {
+        background: white !important;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    
+    /* Asegurar que el texto sea visible */
+    .login-card .form-control-custom,
+    .login-card .form-control-custom::placeholder {
+        color: #212529 !important;
+        opacity: 1;
+    }
+    
+    .login-card .form-control-custom::placeholder {
+        color: #adb5bd !important;
+    }
+}
+
+/* ===== MEJORAS PARA MODALES EN MÓVILES ===== */
+@media (max-width: 767.98px) {
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .modal-content {
+        border-radius: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: none;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        flex-shrink: 0;
+    }
+    
+    .modal-title {
+        font-size: 1.25rem;
+    }
+    
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 0.75rem 1rem;
+        border-top: 1px solid #dee2e6;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+    }
+    
+    .modal-footer .btn {
+        flex: 1;
+        min-width: calc(50% - 0.5rem);
+        margin: 0.25rem;
+    }
+}
+
+/* ===== MEJORAS PARA NAVEGACIÓN EN MÓVILES ===== */
+@media (max-width: 767.98px) {
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 0.9rem;
+        padding: 0.25rem 0;
+    }
+    
+    .navbar-brand img {
+        max-width: 32px;
+        height: auto;
+    }
+    
+    .navbar-toggler {
+        padding: 0.5rem;
+        border: none;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+    
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+        outline: none;
+    }
+    
+    .navbar-collapse {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.875rem 1rem;
+        text-align: left;
+        font-size: 0.95rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .navbar-nav .nav-link:last-child {
+        border-bottom: none;
+    }
+    
+    .dropdown-menu {
+        width: 100%;
+        max-width: 100%;
+        margin-top: 0.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        border: none;
+    }
+    
+    .dropdown-item {
+        padding: 0.875rem 1rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+    }
+}
+
+/* ===== ORIENTACIÓN LANDSCAPE EN MÓVILES ===== */
+@media (max-width: 767.98px) and (orientation: landscape) {
+    .hero-section {
+        min-height: 40vh;
+        padding: 1rem 0;
+    }
+    
+    .display-4 {
+        font-size: 1.5rem;
+    }
+    
+    .navbar {
+        padding: 0.25rem 0;
+    }
+    
+    .sidebar {
+        width: 250px;
+    }
+    
+    .card-body {
+        padding: 0.875rem;
+    }
+    
+    /* Grid de 2 columnas en landscape para tarjetas pequeñas */
+    .row .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* ===== MEJORAS ADICIONALES PARA MÓVILES ===== */
+@media (max-width: 767.98px) {
+    /* Contenedores */
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Espaciado vertical mejorado */
+    .py-5 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    .py-4 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+    
+    .my-5 {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .my-4 {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Cards mejoradas */
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+    
+    /* Listas */
+    .list-group-item {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Badges */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+        border-radius: 6px;
+    }
+    
+    .badge.fs-6 {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Botones mejorados */
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        min-height: 36px;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        min-height: 50px;
+    }
+    
+    /* Alineación de texto en móviles */
+    .text-end {
+        text-align: center !important;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .d-flex.justify-content-between > * {
+        width: 100%;
+    }
+    
+    /* Imágenes responsivas */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Prevenir overflow horizontal */
+    body {
+        overflow-x: hidden;
+    }
+    
+    /* Mejorar scroll en móviles */
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+}
+
+/* ===== MEJORAS PARA TABLETS ===== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* ===== UTILIDADES RESPONSIVAS ADICIONALES ===== */
+@media (max-width: 575.98px) {
+    .d-mobile-none {
+        display: none !important;
+    }
+    
+    .d-mobile-block {
+        display: block !important;
+    }
+    
+    .d-mobile-flex {
+        display: flex !important;
+    }
+    
+    .text-mobile-center {
+        text-align: center !important;
+    }
+    
+    .w-mobile-100 {
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 576px) {
+    .d-mobile-none {
+        display: block !important;
+    }
+    
+    .d-mobile-block {
+        display: none !important;
+    }
+}
+
+/* ===== MEJORAS DE ACCESIBILIDAD ===== */
+@media (max-width: 1024px) {
+    /* Mejorar contraste en móviles */
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    /* Áreas de toque más grandes */
+    a, button, .btn, input[type="submit"], input[type="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Mejor feedback visual */
+    .btn:focus,
+    .form-control:focus,
+    .form-select:focus {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+    }
+}
+
+/* ===== ANIMACIONES SUAVES PARA MÓVILES ===== */
+@media (max-width: 1024px) {
+    * {
+        -webkit-tap-highlight-color: rgba(0,123,255,0.2);
+    }
+    
+    .card,
+    .btn,
+    .nav-link {
+        transition: all 0.2s ease;
+    }
+    
+    .card:active {
+        transform: scale(0.98);
+    }
+    
+    .btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ===== MEJORAS ADICIONALES PARA RESPONSIVE ===== */
+@media (max-width: 767.98px) {
+    /* Mejorar inputs en móviles */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Previene zoom en iOS */
+        padding: 0.75rem;
+    }
+    
+    /* Mejorar tablas en móviles */
+    .table-responsive {
+        border-radius: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Mejorar cards en móviles */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Mejorar modales en móviles */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-content {
+        border-radius: 10px;
+    }
+    
+    /* Mejorar botones en móviles */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        width: auto;
+    }
+    
+    /* Mejorar formularios en móviles */
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .input-group {
+        margin-bottom: 1rem;
+    }
+    
+    /* Mejorar navegación en móviles */
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .navbar-nav {
+        padding-top: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* ===== MEJORAS PARA PANTALLAS MUY PEQUEÑAS ===== */
+@media (max-width: 575.98px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    /* Ocultar columnas menos importantes en tablas */
+    .table-responsive table {
+        font-size: 0.875rem;
+    }
+}
+
+/* ===== MEJORAS PARA PANTALLAS GRANDES ===== */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+/* ===== MEJORAS DE ACCESIBILIDAD Y USABILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== MEJORAS PARA IMPRESIÓN ===== */
+@media print {
+    .navbar,
+    .sidebar,
+    .btn,
+    .pagination,
+    .no-print {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+}

@@ -1,0 +1,114 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Gestionar Horarios - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-clock me-2"></i>Gestionar Horarios Disponibles</h2>
+    <a href="/admin/horarios/nuevo" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nuevo Horario
+    </a>
+</div>
+
+{% if horarios %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Día</th>
+                            <th>Hora Inicio</th>
+                            <th>Hora Fin</th>
+                            <th>Duración</th>
+                            <th>Estado</th>
+                            <th>Citas Asociadas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for horario in horarios %}
+                        <tr>
+                            <td>{{ horario.id }}</td>
+                            <td>
+                                {% if horario.dia_semana == 0 %}
+                                    <span class="badge bg-primary">Lunes</span>
+                                {% elif horario.dia_semana == 1 %}
+                                    <span class="badge bg-success">Martes</span>
+                                {% elif horario.dia_semana == 2 %}
+                                    <span class="badge bg-warning">Miércoles</span>
+                                {% elif horario.dia_semana == 3 %}
+                                    <span class="badge bg-info">Jueves</span>
+                                {% elif horario.dia_semana == 4 %}
+                                    <span class="badge bg-danger">Viernes</span>
+                                {% elif horario.dia_semana == 5 %}
+                                    <span class="badge bg-secondary">Sábado</span>
+                                {% else %}
+                                    <span class="badge bg-dark">Domingo</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ horario.hora_inicio.strftime('%H:%M') }}</strong></td>
+                            <td><strong>{{ horario.hora_fin.strftime('%H:%M') }}</strong></td>
+                            <td>
+                                {% set inicio = horario.hora_inicio %}
+                                {% set fin = horario.hora_fin %}
+                                {% set diff = ((fin.hour * 60 + fin.minute) - (inicio.hour * 60 + inicio.minute)) %}
+                                {{ (diff // 60) }}h {{ (diff % 60) }}m
+                            </td>
+                            <td>
+                                {% if horario.activo %}
+                                    <span class="badge bg-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ horario.citas|length }} cita(s)</span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="/admin/horarios/{{ horario.id }}/editar" 
+                                       class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="POST" action="/admin/horarios/{{ horario.id }}/toggle" class="d-inline" onsubmit="return confirm('¿{{ 'Desactivar' if horario.activo else 'Activar' }} este horario?');">
+                                        <button type="submit" class="btn btn-sm btn-{{ 'warning' if horario.activo else 'success' }}" 
+                                                title="{{ 'Desactivar' if horario.activo else 'Activar' }}">
+                                            <i class="fas fa-{{ 'toggle-on' if horario.activo else 'toggle-off' }}"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="/admin/horarios/{{ horario.id }}/eliminar" 
+                                          class="d-inline" 
+                                          onsubmit="return confirm('¿Está seguro de eliminar este horario? Esta acción no se puede deshacer.');">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        No hay horarios registrados. <a href="{{ url_for('admin.nuevo_horario') }}">Crear primer horario</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

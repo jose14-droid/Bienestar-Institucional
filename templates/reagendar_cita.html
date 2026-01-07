@@ -1,0 +1,272 @@
+{% if session.rol in ['admin', 'administrador'] %}
+    {% extends "admin_base.html" %}
+{% elif session.rol == 'docente' %}
+    {% extends "docente_base.html" %}
+{% else %}
+    {% extends "user_base.html" %}
+{% endif %}
+
+{% block title %}Reagendar Cita - Coordinación de Bienestar Institucional{% endblock %}
+
+{% block admin_content %}
+<div class="container py-4">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Reagendar Cita</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Información de la cita actual:</strong><br>
+                    <strong>Fecha:</strong> {{ cita.fecha.strftime('%d/%m/%Y') }}<br>
+                    <strong>Hora:</strong> {{ cita.hora.strftime('%H:%M') }}<br>
+                    <strong>Motivo:</strong> {{ cita.motivo }}
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="fecha_nueva" class="form-label fw-bold">Nueva Fecha <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="fecha_nueva" name="fecha_nueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="hora_nueva" class="form-label fw-bold">Nueva Hora <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" id="hora_nueva" name="hora_nueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo_reagendamiento" class="form-label fw-bold">Motivo del Reagendamiento <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motivo_reagendamiento" name="motivo_reagendamiento" rows="3" required placeholder="Explique el motivo por el cual necesita reagendar la cita..."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('admin.citas') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-calendar-check me-2"></i>Reagendar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block docente_content %}
+<div class="container py-4">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Reagendar Cita</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Información de la cita actual:</strong><br>
+                    <strong>Fecha:</strong> {{ cita.fecha.strftime('%d/%m/%Y') }}<br>
+                    <strong>Hora:</strong> {{ cita.hora.strftime('%H:%M') }}<br>
+                    <strong>Motivo:</strong> {{ cita.motivo }}
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Importante:</strong> Debe reagendar la cita con al menos <strong>24 horas de anticipación</strong>.
+                    La nueva fecha y hora deben ser al menos 24 horas después del momento actual.
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="fecha_nueva" class="form-label fw-bold">Nueva Fecha <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="fecha_nueva" name="fecha_nueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="hora_nueva" class="form-label fw-bold">Nueva Hora <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" id="hora_nueva" name="hora_nueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo_reagendamiento" class="form-label fw-bold">Motivo del Reagendamiento <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motivo_reagendamiento" name="motivo_reagendamiento" rows="3" required placeholder="Explique el motivo por el cual necesita reagendar la cita..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label fw-bold">Documento PDF de Soporte <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf" required>
+                        <small class="form-text text-muted">Debe subir un documento PDF que respalde el motivo del reagendamiento (máximo 16MB)</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('docente.citas') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-calendar-check me-2"></i>Reagendar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaInput = document.getElementById('fecha_nueva');
+    const horaInput = document.getElementById('hora_nueva');
+    
+    // Establecer fecha mínima como mañana
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    fechaInput.min = tomorrow.toISOString().split('T')[0];
+    
+    // Validar que la fecha y hora sean al menos 24 horas en el futuro
+    function validarFechaHora() {
+        const fecha = fechaInput.value;
+        const hora = horaInput.value;
+        
+        if (!fecha || !hora) {
+            return true; // Permitir que el usuario complete ambos campos
+        }
+        
+        const fechaHoraSeleccionada = new Date(fecha + 'T' + hora);
+        const ahora = new Date();
+        const diferencia = fechaHoraSeleccionada - ahora;
+        const horasMinimas = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+        
+        if (diferencia < horasMinimas) {
+            alert('La nueva fecha y hora deben ser al menos 24 horas después del momento actual.');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    fechaInput.addEventListener('change', validarFechaHora);
+    horaInput.addEventListener('change', validarFechaHora);
+    
+    // Validar antes de enviar
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if (!validarFechaHora()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block user_content %}
+<div class="container py-4">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Reagendar Cita</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Información de la cita actual:</strong><br>
+                    <strong>Fecha:</strong> {{ cita.fecha.strftime('%d/%m/%Y') }}<br>
+                    <strong>Hora:</strong> {{ cita.hora.strftime('%H:%M') }}<br>
+                    <strong>Motivo:</strong> {{ cita.motivo }}
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Importante:</strong> Debe reagendar la cita con al menos <strong>24 horas de anticipación</strong>.
+                    La nueva fecha y hora deben ser al menos 24 horas después del momento actual.
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="fecha_nueva" class="form-label fw-bold">Nueva Fecha <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="fecha_nueva" name="fecha_nueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="hora_nueva" class="form-label fw-bold">Nueva Hora <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" id="hora_nueva" name="hora_nueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo_reagendamiento" class="form-label fw-bold">Motivo del Reagendamiento <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motivo_reagendamiento" name="motivo_reagendamiento" rows="3" required placeholder="Explique el motivo por el cual necesita reagendar la cita..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label fw-bold">Documento PDF de Soporte <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".pdf" required>
+                        <small class="form-text text-muted">Debe subir un documento PDF que respalde el motivo del reagendamiento (máximo 16MB)</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('cita.citas') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-calendar-check me-2"></i>Reagendar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaInput = document.getElementById('fecha_nueva');
+    const horaInput = document.getElementById('hora_nueva');
+    
+    // Establecer fecha mínima como mañana
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    fechaInput.min = tomorrow.toISOString().split('T')[0];
+    
+    // Validar que la fecha y hora sean al menos 24 horas en el futuro
+    function validarFechaHora() {
+        const fecha = fechaInput.value;
+        const hora = horaInput.value;
+        
+        if (!fecha || !hora) {
+            return true; // Permitir que el usuario complete ambos campos
+        }
+        
+        const fechaHoraSeleccionada = new Date(fecha + 'T' + hora);
+        const ahora = new Date();
+        const diferencia = fechaHoraSeleccionada - ahora;
+        const horasMinimas = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+        
+        if (diferencia < horasMinimas) {
+            alert('La nueva fecha y hora deben ser al menos 24 horas después del momento actual.');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    fechaInput.addEventListener('change', validarFechaHora);
+    horaInput.addEventListener('change', validarFechaHora);
+    
+    // Validar antes de enviar
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if (!validarFechaHora()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

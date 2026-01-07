@@ -1,0 +1,107 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Nuevo Evento - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Crear Nuevo Evento</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título del Evento</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha_inicio" class="form-label">Fecha y Hora de Inicio</label>
+                                <input type="datetime-local" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha_fin" class="form-label">Fecha y Hora de Fin</label>
+                                <input type="datetime-local" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="lugar" class="form-label">Lugar</label>
+                            <input type="text" class="form-control" id="lugar" name="lugar" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tipo" class="form-label">Tipo de Evento</label>
+                                <select class="form-select" id="tipo" name="tipo" required>
+                                    <option value="">Seleccione un tipo</option>
+                                    <option value="academico">Académico</option>
+                                    <option value="cultural">Cultural</option>
+                                    <option value="deportivo">Deportivo</option>
+                                    <option value="laboral">Laboral</option>
+                                    <option value="general">General</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="capacidad_maxima" class="form-label">Capacidad Máxima (Opcional)</label>
+                                <input type="number" class="form-control" id="capacidad_maxima" name="capacidad_maxima" min="1">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="inscripciones_abiertas" name="inscripciones_abiertas" checked>
+                                <label class="form-check-label" for="inscripciones_abiertas">
+                                    Inscripciones abiertas
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.eventos') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Crear Evento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha mínima como hoy
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    document.getElementById('fecha_inicio').min = today.toISOString().slice(0, 16);
+    document.getElementById('fecha_fin').min = today.toISOString().slice(0, 16);
+    
+    // Validar que la fecha de fin sea igual o posterior a la fecha de inicio (permite eventos de un solo día)
+    document.getElementById('fecha_inicio').addEventListener('change', function() {
+        document.getElementById('fecha_fin').min = this.value;
+    });
+    
+    // Validar al enviar el formulario que la fecha de fin sea igual o posterior a la de inicio
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const fechaInicio = new Date(document.getElementById('fecha_inicio').value);
+        const fechaFin = new Date(document.getElementById('fecha_fin').value);
+        
+        if (fechaFin < fechaInicio) {
+            e.preventDefault();
+            alert('La fecha y hora de fin debe ser igual o posterior a la fecha y hora de inicio.');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

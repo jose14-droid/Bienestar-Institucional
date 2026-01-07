@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="description" content="Sistema de Coordinación de Bienestar Institucional - Instituto Superior Tecnológico TENA">
+    <meta name="keywords" content="bienestar estudiantil, citas, eventos, ofertas laborales, TENA">
+    <meta name="author" content="Coordinación de Bienestar Institucional">
+    
+    <!-- Meta tags para dispositivos móviles -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#007bff">
+    
+    <title>{% block title %}Coordinación de Bienestar Institucional{% endblock %}</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    
+    <!-- Favicon y iconos -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon-192x192.png') }}">
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ url_for('static', filename='css/style.css') }}" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='js/main.js') }}" as="script">
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('public.index') }}">
+                <img src="{{ url_for('static', filename='images/icono.png') }}" alt="Perfil" class="img-fluid" style="max-width: 40px;"> 
+                Coordinación de Bienestar Institucional
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if not session.user_id %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.index') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.programas') }}">Programas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.servicios') }}">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.proyectos') }}">Proyectos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.eventos') }}">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.ofertas_laborales') }}">Ofertas Laborales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('public.noticias') }}">Noticias</a>
+                    </li>
+                </ul>
+                {% endif %}
+                
+                <ul class="navbar-nav">
+                    {% if session.user_id %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% set usuario_actual = get_current_user() %}
+                                {% if usuario_actual and usuario_actual.foto_perfil %}
+                                <img src="{{ url_for('foto_perfil', filename=usuario_actual.foto_perfil) }}" 
+                                     alt="Foto de perfil" 
+                                     class="rounded-circle me-2" 
+                                     style="width: 32px; height: 32px; object-fit: cover;">
+                                {% else %}
+                                <i class="fas fa-user-circle me-2" style="font-size: 1.2rem;"></i>
+                                {% endif %}
+                                <span class="me-1">{{ session.username }}</span>
+                                <i class="fas fa-chevron-down ms-1" style="font-size: 0.8rem;"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="min-width: 280px; border-radius: 8px;">
+                                <li class="px-3 py-2 border-bottom bg-light">
+                                    <small class="text-muted d-block fw-bold">Bienvenido, {{ session.username }}</small>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                
+                                <!-- Opciones comunes para todos los roles -->
+                                <li><a class="dropdown-item py-2" href="{{ url_for('user.dashboard') }}">
+                                    <i class="fas fa-tachometer-alt me-2 text-primary"></i>Mi Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item py-2" href="{{ url_for('user.perfil') }}">
+                                    <i class="fas fa-user me-2 text-info"></i>Mi Perfil
+                                </a></li>
+                                <li><a class="dropdown-item py-2" href="{{ url_for('public.index') }}">
+                                    <i class="fas fa-home me-2 text-secondary"></i>Inicio
+                                </a></li>
+                                
+                                <!-- Opciones específicas por rol -->
+                                {% if session.rol == 'admin' %}
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li><h6 class="dropdown-header text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Panel Administrativo</h6></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('admin.usuarios') }}">
+                                        <i class="fas fa-users me-2"></i>Gestionar Usuarios
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('admin.eventos') }}">
+                                        <i class="fas fa-calendar-alt me-2"></i>Gestionar Eventos
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('admin.ofertas') }}">
+                                        <i class="fas fa-briefcase me-2"></i>Gestionar Ofertas
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('admin.noticias') }}">
+                                        <i class="fas fa-newspaper me-2"></i>Gestionar Noticias
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('admin.informes') }}">
+                                        <i class="fas fa-file-alt me-2"></i>Gestionar Informes
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('admin.secciones') }}">
+                                        <i class="fas fa-folder-open me-2"></i>Gestionar Secciones
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('cita.citas') }}">
+                                        <i class="fas fa-calendar-check me-2"></i>Gestionar Citas
+                                    </a></li>
+                                {% elif session.rol == 'docente' %}
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li><h6 class="dropdown-header text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px; color: #0d6efd;">Panel Docente</h6></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('docente.usuarios') }}">
+                                        <i class="fas fa-users me-2 text-primary"></i>Ver Usuarios
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('docente.citas') }}">
+                                        <i class="fas fa-calendar-check me-2 text-success"></i>Ver Citas
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('docente.reportes') }}">
+                                        <i class="fas fa-chart-bar me-2 text-warning"></i>Reportes
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('docente.informes') }}">
+                                        <i class="fas fa-file-alt me-2 text-info"></i>Informes
+                                    </a></li>
+                                {% else %}
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li><h6 class="dropdown-header text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Mi Panel</h6></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('cita.agendar_cita') }}">
+                                        <i class="fas fa-calendar-plus me-2"></i>Agendar Cita
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('cita.citas') }}">
+                                        <i class="fas fa-calendar-check me-2"></i>Mis Citas
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('public.eventos') }}">
+                                        <i class="fas fa-calendar-alt me-2"></i>Eventos
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('public.ofertas_laborales') }}">
+                                        <i class="fas fa-briefcase me-2"></i>Ofertas Laborales
+                                    </a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('public.noticias') }}">
+                                        <i class="fas fa-newspaper me-2"></i>Noticias
+                                    </a></li>
+                                {% endif %}
+                                
+                                <li><hr class="dropdown-divider my-2"></li>
+                                <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.registro') }}">Registrarse</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages - Solo se muestran en las plantillas específicas de rol (user_base, admin_base, docente_base) -->
+
+    <!-- Modal de Acceso Requerido -->
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; max-width: 500px;">
+                <div class="modal-body p-5">
+                    <div class="mb-4">
+                        <h4 class="modal-title text-primary fw-bold mb-2" id="loginRequiredModalLabel" style="font-size: 1.5rem;">Acceso Requerido</h4>
+                        <p class="text-muted mb-3" style="font-size: 0.95rem;">Inicia sesión para continuar</p>
+                    </div>
+                    
+                    <div class="mb-4" style="border-left: 4px solid #007bff; padding: 15px 15px 15px 20px; background-color: #f8f9fa; border-radius: 4px;">
+                        <p class="text-dark mb-0" id="loginRequiredMessage" style="line-height: 1.6; font-size: 0.95rem;">
+                            Para explorar todas las publicaciones, necesitas iniciar sesión con tu cuenta.
+                        </p>
+                    </div>
+                    
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 6px;">Cancelar</button>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary px-4 d-flex align-items-center" style="border-radius: 6px;">
+                            <span>Iniciar Sesión</span>
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // Función para mostrar el modal de acceso requerido con mensaje personalizado
+    function showLoginRequiredModal(section) {
+        const messages = {
+            'dashboard': 'Necesitas iniciar sesión para acceder a tu panel.',
+            'citas': 'Necesitas iniciar sesión para acceder a tus citas.',
+            'agendar': 'Necesitas iniciar sesión para agendar una cita.',
+            'horarios': 'Necesitas iniciar sesión para ver los horarios disponibles.',
+            'eventos': 'Necesitas iniciar sesión para acceder a los eventos.',
+            'ofertas': 'Necesitas iniciar sesión para ver las ofertas laborales.',
+            'noticias': 'Necesitas iniciar sesión para ver todas las noticias.',
+            'default': 'Para explorar todas las publicaciones, necesitas iniciar sesión con tu cuenta.'
+        };
+        
+        const message = messages[section] || messages['default'];
+        document.getElementById('loginRequiredMessage').textContent = message;
+        
+        const modal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+        modal.show();
+    }
+    </script>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Coordinación de Bienestar Institucional</h5>
+                    <p>Instituto Superior Tecnológico TENA</p>
+                    <p>Tecnología, Innovación y Desarrollo</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Contacto</h5>
+                    <p><i class="fas fa-envelope me-2"></i> bienestar@instituto.edu</p>
+                    <p><i class="fas fa-phone me-2"></i> (06) 288-1234</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Tena, Ecuador</p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2025 Coordinación de Bienestar Institucional. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('{{ url_for("static", filename="sw.js") }}')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registrado exitosamente:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Error al registrar ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,137 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Editar Cita - Panel Admin{% endblock %}
+
+{% block admin_content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Cita</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="usuario_id" class="form-label">Usuario <span class="text-danger">*</span></label>
+                        <select class="form-select" id="usuario_id" name="usuario_id" required>
+                            <option value="">Seleccione un usuario</option>
+                            {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}" {% if usuario.id == cita.usuario_id %}selected{% endif %}>
+                                {{ usuario.nombre_completo or usuario.username }} - {{ usuario.cedula or 'Sin cédula' }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha" class="form-label">Fecha <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ cita.fecha.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hora" class="form-label">Hora <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control" id="hora" name="hora" value="{{ cita.hora.strftime('%H:%M') }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo <span class="text-danger">*</span></label>
+                        <select class="form-select" id="motivo" name="motivo" required>
+                            <option value="">Seleccione un motivo</option>
+                            <optgroup label="Servicios de Bienestar">
+                                <option value="Apoyo Psicológico" {% if cita.motivo == 'Apoyo Psicológico' %}selected{% endif %}>Apoyo Psicológico</option>
+                                <option value="Información de Becas" {% if cita.motivo == 'Información de Becas' %}selected{% endif %}>Información de Becas</option>
+                                <option value="Orientación Académica" {% if cita.motivo == 'Orientación Académica' %}selected{% endif %}>Orientación Académica</option>
+                                <option value="Apoyo Social" {% if cita.motivo == 'Apoyo Social' %}selected{% endif %}>Apoyo Social</option>
+                            </optgroup>
+                            <optgroup label="Otros Servicios">
+                                <option value="Asesoría Laboral" {% if cita.motivo == 'Asesoría Laboral' %}selected{% endif %}>Asesoría Laboral</option>
+                                <option value="Orientación Vocacional" {% if cita.motivo == 'Orientación Vocacional' %}selected{% endif %}>Orientación Vocacional</option>
+                                <option value="Tutorías Académicas" {% if cita.motivo == 'Tutorías Académicas' %}selected{% endif %}>Tutorías Académicas</option>
+                                <option value="Planificación de Carrera" {% if cita.motivo == 'Planificación de Carrera' %}selected{% endif %}>Planificación de Carrera</option>
+                            </optgroup>
+                            <optgroup label="Otros">
+                                <option value="Problemas Personales" {% if cita.motivo == 'Problemas Personales' %}selected{% endif %}>Problemas Personales</option>
+                                <option value="Otro" {% if cita.motivo == 'Otro' %}selected{% endif %}>Otro</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="carrera_id" class="form-label">Carrera</label>
+                            <select class="form-select" id="carrera_id" name="carrera_id">
+                                <option value="">Seleccione una carrera</option>
+                                {% for carrera in carreras %}
+                                <option value="{{ carrera.id }}" {% if carrera.id == cita.carrera_id %}selected{% endif %}>{{ carrera.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="semestre" class="form-label">Semestre</label>
+                            <select class="form-select" id="semestre" name="semestre">
+                                <option value="">Seleccione un semestre</option>
+                                {% for i in range(1, 11) %}
+                                <option value="{{ i }}" {% if cita.semestre == i %}selected{% endif %}>{{ i }}° Semestre</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="pendiente" {% if cita.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="confirmada" {% if cita.estado == 'confirmada' %}selected{% endif %}>Confirmada</option>
+                            <option value="cancelada" {% if cita.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                            <option value="pospuesta" {% if cita.estado == 'pospuesta' %}selected{% endif %}>Pospuesta</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="Observaciones adicionales...">{{ cita.observaciones or '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Archivos Actuales</label>
+                        {% set archivos = cita.get_archivos_adjuntos() %}
+                        {% if archivos %}
+                        <div class="list-group mb-2">
+                            {% for archivo in archivos %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-file me-2"></i>{{ archivo.split('_', 1)[1] if '_' in archivo else archivo }}</span>
+                                <a href="{{ url_for('cita.descargar_documento_cita', cita_id=cita.id, filename=archivo) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No hay archivos adjuntos</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="archivos" class="form-label">Agregar Archivos Adjuntos (Opcional)</label>
+                        <input type="file" class="form-control" id="archivos" name="archivos" multiple accept=".pdf,.png,.jpg,.jpeg,.gif">
+                        <small class="form-text text-muted">Puede subir imágenes (PNG, JPG, GIF) y documentos PDF. Máximo 16MB por archivo.</small>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{{ url_for('admin.citas') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Actualizar Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
